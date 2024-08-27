@@ -5,7 +5,7 @@ env:
   FILES: "." # seperate multiple entries with ,
   FILES_NEW: "." # seperate multiple entries with ,
   
-  EXTRA: mv "*.*" "lib/" # do an extra command like renaming
+  # EXTRA: mv "*.*" "lib/" # do an extra command like renaming
   
   USERNAME: ${{ github.actor }} 
   ADDRESS_SUFFIX: users.noreply.github.com
@@ -89,9 +89,9 @@ jobs:
           #           $EXTRA
           # cp -u $FILES_NEW ../
 
-      - name: Create dir
-        run: |
-          mkdir lib
+   #   - name: Create dir
+   #     run: |
+   #       mkdir lib
           
 
       - name: Update
