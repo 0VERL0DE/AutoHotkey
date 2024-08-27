@@ -95,7 +95,7 @@ jobs:
       - name: Update
         if: env.exiting1 != 'true'
         run: |
-          echo "Moving to directory " $PATH_SOURCE_CHECKOUT
+          echo "From dir " $PATH_SOURCE_CHECKOUT ", copy all files in " $FILES_NEW " to " ../ " and move to " ../
           cd $PATH_SOURCE_CHECKOUT
           cp -u -R $FILES_NEW ../
           cd ..
