@@ -108,9 +108,11 @@ jobs:
         
 
              # cp -u -R "*/lib/*" ../
-          echo "From dir " $PWD ", copied all files in relpath " $FILES_MATCHING_FILTER_ARRAY
+          echo "From dir " $PWD ", copied all files from relpath " $FILES_MATCHING_FILTER_ARRAY " into " $PWD
+          -ls $PWD
           cd ..
           echo "Return to dir " $PWD
+          -ls $PWD
 
 
 
