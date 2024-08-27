@@ -48,7 +48,7 @@ jobs:
       - name: Report
         run: |
             echo "    all files in " $PWD
-            ls $PWD
+            find . -type f -ls
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.ORIGIN_BRANCH
