@@ -3,7 +3,7 @@ env:
   SOURCE_REPO: mmikeww/AHK-v2-script-converter
   AUTOMATIC_MONITOR: true
   FILES: "." # seperate multiple entries with ,
-  FILES_NEW: "." # seperate multiple entries with ,
+  FILES_NEW: "*.ahk" # seperate multiple entries with ,
   # EXTRA: mv LICENSE LICENSE_some_repo # do an extra command like renaming
   USERNAME: ${{ github.actor }} 
   ADDRESS_SUFFIX: users.noreply.github.com
@@ -45,6 +45,9 @@ jobs:
           ref: ${{ env.SOURCE_BRANCH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
           path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          sparse-checkout: |
+            lib
+            .ahk
 
       - name: Checkout source with token but without branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && !env.SOURCE_BRANCH
@@ -53,7 +56,10 @@ jobs:
           repository: ${{ env.SOURCE_REPO }}
           token: ${{ secrets[env.TOKEN_NAME] }}
           path: ${{ env.PATH_SOURCE_CHECKOUT }}
-
+          sparse-checkout: |
+            lib
+            .ahk
+          
       - name: Checkout source without token but with branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && env.SOURCE_BRANCH
         uses: actions/checkout@v3
@@ -61,6 +67,9 @@ jobs:
           repository: ${{ env.SOURCE_REPO }}
           ref: ${{ env.SOURCE_BRANCH }}
           path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          sparse-checkout: |
+            lib
+            .ahk
 
       - name: Checkout source without token and without branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && !env.SOURCE_BRANCH
@@ -68,8 +77,12 @@ jobs:
         with:
           repository: ${{ env.SOURCE_REPO }}
           path: ${{ env.PATH_SOURCE_CHECKOUT }}
-
-#           $EXTRA
+          sparse-checkout: |
+            lib
+            .ahk
+            
+          
+          #           $EXTRA
           # cp -u $FILES_NEW ../
 
       - name: Update
@@ -79,11 +92,6 @@ jobs:
           cp -u -R $FILES_NEW ../
           cd ..
 
-      - uses: actions/checkout@v3
-        with:
-          sparse-checkout: |
-            lib
-            src
 
   #    - name: Check for changes
   #      if: env.exiting1 != 'true'
