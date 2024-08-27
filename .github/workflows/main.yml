@@ -45,6 +45,11 @@ jobs:
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
 
+      - name: Report
+        run: |
+            echo "    all files in " $PWD
+            ls $PWD
+
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.ORIGIN_BRANCH
         uses: actions/checkout@v4
@@ -103,10 +108,10 @@ jobs:
           echo "   files in " $PWD " matching search action: "
           find . -type f -path '*/lib*/*.ahk'  -ls
           
-          find . -type f -path '*/lib*/*.ahk'  -exec cp -u {} ../ \;
+          find . -type f -path '*/lib*/*.ahk'  -exec cp {} ../ \;
         
 
-             # cp -u -R "*/lib/*" ../
+          # cp -u -R "*/lib/*" ../
           cd ..
           echo "    all files in " $PWD
           ls $PWD
