@@ -105,7 +105,7 @@ jobs:
         run: |
           git config user.name "$USERNAME"
           git config user.email "$USERNAME@$ADDRESS_SUFFIX"
-          git add /lib/$FILES_NEW
+          git add $FILES_NEW
           git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
       - name: Push
         if: env.exiting1 != 'true' && env.exiting2 != 'true'
