@@ -104,16 +104,17 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
-          echo "   files in " $PWD " matching search action: "
+          echo "    files in " $PWD " matching search action: "
           find . -type f -path '*/lib*/*.ahk'  -ls
-          
+
+          echo "    copying files..."
           find . -type f -path '*/lib*/*.ahk'  -exec cp {} ../ \;
         
 
           # cp -u -R "*/lib/*" ../
           cd ..
-          echo "    all files in " $PWD
-          ls .
+          echo "    files after copying: " $PWD
+          find . -type f -path '*.*'  -ls
 
 
 
