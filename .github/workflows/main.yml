@@ -2,19 +2,19 @@ name: Build lib check flow
 
 
 env:
-  SOURCE_REPO: mmikeww/AHK-v2-script-converter
+  ORIGIN_REPO_PATH: mmikeww/AHK-v2-script-converter
   AUTOMATIC_MONITOR: true
   FILES: "." # seperate multiple entries with ,
-  FILES_NEW: "*.ahk" # seperate multiple entries with ,
+  FILES_MATCHING_FILTER_ARRAY: "*.ahk" # seperate multiple entries with ,
   EXTRA: mv *.ahk lib # do an extra command like renaming
   USERNAME: ${{ github.actor }} 
   ADDRESS_SUFFIX: users.noreply.github.com
   TOKEN_NAME: ACCESS_TOKEN # name of token defined in the target repo's settings, needed for private repos
-  # SOURCE_BRANCH: source_alternate_branch # uncomment to takes files from a non default source branch
+  # ORIGIN_BRANCH: source_alternate_branch # uncomment to takes files from a non default source branch
   # TARGET_BRANCH: target_alternate_branch # uncomment to monitor a non default target branch
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
-  PATH_SOURCE_CHECKOUT: temp_folder
+  ORIGIN_CHECKOUT_TEMP_PATH: temp_folder
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -49,57 +49,61 @@ jobs:
             lib
 
       - name: Checkout source with token and branch
-        if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
+        if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.ORIGIN_BRANCH
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.SOURCE_REPO }}
-          ref: ${{ env.SOURCE_BRANCH }}
+          repository: ${{ env.ORIGIN_REPO_PATH }}
+          ref: ${{ env.ORIGIN_BRANCH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
           sparse-checkout: |
             lib
 
       - name: Checkout source with token but without branch
-        if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && !env.SOURCE_BRANCH
+        if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && !env.ORIGIN_BRANCH
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.SOURCE_REPO }}
+          repository: ${{ env.ORIGIN_REPO_PATH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
           sparse-checkout: |
             lib
           
       - name: Checkout source without token but with branch
-        if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && env.SOURCE_BRANCH
+        if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && env.ORIGIN_BRANCH
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.SOURCE_REPO }}
-          ref: ${{ env.SOURCE_BRANCH }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          repository: ${{ env.ORIGIN_REPO_PATH }}
+          ref: ${{ env.ORIGIN_BRANCH }}
+          path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
           sparse-checkout: |
             lib
 
       - name: Checkout source without token and without branch
-        if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && !env.SOURCE_BRANCH
+        if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && !env.ORIGIN_BRANCH
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.SOURCE_REPO }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          repository: ${{ env.ORIGIN_REPO_PATH }}
+          path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
           sparse-checkout: |
             lib
-            
+
+      - name: Report
+        run: |
+         echo "Origin repo cloned to " $ORIGIN_CHECKOUT_TEMP_PATH
+         
           
-          #           $EXTRA
-          # cp -u $FILES_NEW ../
+      #           $EXTRA
+      # cp -u $FILES_MATCHING_FILTER_ARRAY ../
 
       - name: Update
         if: env.exiting1 != 'true'
         run: |
-          echo "From dir " $PATH_SOURCE_CHECKOUT ", copy all files in " $FILES_NEW " to " ../ " and move to " ../
-          cd $PATH_SOURCE_CHECKOUT
-          cp -u -R $FILES_NEW ../
+          cd $ORIGIN_CHECKOUT_TEMP_PATH
+          echo "From dir " $PWD ", copied all files in relpath " $FILES_MATCHING_FILTER_ARRAY
+          cp -u -R $FILES_MATCHING_FILTER_ARRAY ../
           cd ..
-
+          echo "Return to dir " $PWD
           
   #    - name: Check for changes
   #      if: env.exiting1 != 'true'
@@ -114,8 +118,8 @@ jobs:
         run: |
           git config user.name "$USERNAME"
           git config user.email "$USERNAME@$ADDRESS_SUFFIX"
-          git add $FILES_NEW
-          git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
+          git add $FILES_MATCHING_FILTER_ARRAY
+          git commit -m "Pulled files from $THE_SERVER/$ORIGIN_REPO_PATH."
       - name: Push
         if: env.exiting1 != 'true' && env.exiting2 != 'true'
         run: |
