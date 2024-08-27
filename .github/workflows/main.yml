@@ -107,13 +107,13 @@ jobs:
           echo "   files in " $PWD " matching search action: "
           find . -type f -path '*/lib*/*.ahk'  -ls
           
-          find . -type f -path '*/lib*/*.ahk'  -exec cp {} . \;
+          find . -type f -path '*/lib*/*.ahk'  -exec cp {} ../ \;
         
 
           # cp -u -R "*/lib/*" ../
           cd ..
           echo "    all files in " $PWD
-          ls $PWD
+          ls .
 
 
 
