@@ -45,10 +45,6 @@ jobs:
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
 
-      - name: Report
-        run: |
-            echo "    all files in " $PWD
-
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.ORIGIN_BRANCH
         uses: actions/checkout@v4
@@ -92,7 +88,7 @@ jobs:
       - name: Report
         run: |
          echo "Origin repo cloned to " $ORIGIN_CHECKOUT_TEMP_PATH ": "
-         find $ORIGIN_CHECKOUT_TEMP_PATH -type f -path '*.*' -ls
+         find $PWD -type f -path '*.*' -ls
 
           
       #           $EXTRA
