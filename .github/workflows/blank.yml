@@ -88,7 +88,6 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $PATH_SOURCE_CHECKOUT
-          $EXTRA
           cp -u -R $FILES_NEW ../Lib
           cd ..
 
