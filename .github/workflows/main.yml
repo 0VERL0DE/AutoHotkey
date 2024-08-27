@@ -53,8 +53,13 @@ jobs:
           ref: ${{ env.ORIGIN_BRANCH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
           path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
+          fetch-depth: 0
           sparse-checkout: |
             lib
+            inc
+          sparse-checkout-cone-mode: false
+
+
 
       - name: Checkout source with token but without branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && !env.ORIGIN_BRANCH
@@ -82,8 +87,11 @@ jobs:
         with:
           repository: ${{ env.ORIGIN_REPO_PATH }}
           path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
+          fetch-depth: 0
           sparse-checkout: |
             lib
+            inc
+          sparse-checkout-cone-mode: false
 
       - name: Report
         run: |
@@ -105,7 +113,7 @@ jobs:
           find . -type f -path '*/lib*/*.*'  -ls
 
           echo "    copying files..."
-          find . -type f -path '*/lib*/*.*'  -exec cp {} ../ \;
+          find . -type f -path '*/lib*/*.*'  -exec cp {} . \;
         
 
           # cp -u -R "*/lib/*" ../
