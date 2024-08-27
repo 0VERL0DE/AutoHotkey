@@ -26,6 +26,8 @@ on: # Remove # below for non default branches
 jobs:
   pull-file:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check whether to automatically monitor
         if: ${{ github.event_name != 'workflow_dispatch' && env.AUTOMATIC_MONITOR == false }}
