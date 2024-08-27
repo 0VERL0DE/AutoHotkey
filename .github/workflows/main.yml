@@ -104,15 +104,15 @@ jobs:
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
           
-          find . -type f -path '*lib*/*.*' -ls -exec cp -u {} ../ \;
+          find . -type f -path '*lib*/*.*'  -exec cp -u {} ../ \;
         
 
              # cp -u -R "*/lib/*" ../
           echo "From dir " $PWD ", copied all files from relpath " $FILES_MATCHING_FILTER_ARRAY " into " $PWD
-          -ls $PWD
+          ls $PWD
           cd ..
           echo "Return to dir " $PWD
-          -ls $PWD
+          ls $PWD
 
 
 
