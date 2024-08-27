@@ -100,7 +100,7 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
-          cp -u -R $FILES_MATCHING_FILTER_ARRAY ../
+          cp -u -R . ../
           echo "From dir " $PWD ", copied all files in relpath " $FILES_MATCHING_FILTER_ARRAY
           cd ..
           echo "Return to dir " $PWD
