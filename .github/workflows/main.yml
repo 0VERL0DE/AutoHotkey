@@ -5,7 +5,7 @@ env:
   ORIGIN_REPO_PATH: mmikeww/AHK-v2-script-converter
   AUTOMATIC_MONITOR: true
   FILES: "." # seperate multiple entries with ,
-  FILES_MATCHING_FILTER_ARRAY: "*.ahk" # seperate multiple entries with ,
+  FILES_MATCHING_FILTER_ARRAY: ''  # "*.ahk" # seperate multiple entries with ,
   EXTRA: mv *.ahk lib # do an extra command like renaming
   USERNAME: ${{ github.actor }} 
   ADDRESS_SUFFIX: users.noreply.github.com
@@ -100,8 +100,8 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
-          echo "From dir " $PWD ", copied all files in relpath " $FILES_MATCHING_FILTER_ARRAY
           cp -u -R $FILES_MATCHING_FILTER_ARRAY ../
+          echo "From dir " $PWD ", copied all files in relpath " $FILES_MATCHING_FILTER_ARRAY
           cd ..
           echo "Return to dir " $PWD
           
