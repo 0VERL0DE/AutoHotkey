@@ -114,8 +114,7 @@ jobs:
           # cp -u -R "*/lib/*" ../
           cd ..
           echo "    files after copying: " $PWD
-          find . -type f -path '*.*'  -ls
-
+          find . -type f -path '*/lib*/*'  -ls
 
 
 ## execute `process` once for each file
