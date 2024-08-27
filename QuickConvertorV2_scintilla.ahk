@@ -1,4 +1,4 @@
-w<xc<wxcw<xcwxc{ ;FILE_NAME:  QuickConverterV2_scintilla.ahk - v2 - Converts AutoHotkey v1.1 to v2.0 uses Scintilla editor function
+{ ;FILE_NAME:  QuickConverterV2_scintilla.ahk - v2 - Converts AutoHotkey v1.1 to v2.0 uses Scintilla editor function
   ; REQUIRES: AutoHotkey v2.0+
   ; Language:       English
   ; Platform:       Windows11
