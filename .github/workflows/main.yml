@@ -44,9 +44,6 @@ jobs:
       - name: Checkout
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            lib
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.ORIGIN_BRANCH
@@ -104,9 +101,9 @@ jobs:
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
           echo "   files in " $PWD " matching search action: "
-          find . -type f -path '*lib*/*.*'  -ls
+          find . -type f -path '*/lib*/*.ahk'  -ls
           
-          find . -type f -path '*lib*/*.*'  -exec cp -u {} ../ \;
+          find . -type f -path '*/lib*/*.ahk'  -exec cp -u {} ../ \;
         
 
              # cp -u -R "*/lib/*" ../
