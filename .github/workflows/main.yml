@@ -91,8 +91,9 @@ jobs:
 
       - name: Report
         run: |
-         echo "Origin repo cloned to " $ORIGIN_CHECKOUT_TEMP_PATH
-         
+         echo "Origin repo cloned to " $ORIGIN_CHECKOUT_TEMP_PATH ": "
+         find $ORIGIN_CHECKOUT_TEMP_PATH -type f -path '*.*' -ls
+
           
       #           $EXTRA
       # cp -u $FILES_MATCHING_FILTER_ARRAY ../
@@ -114,7 +115,7 @@ jobs:
           # cp -u -R "*/lib/*" ../
           cd ..
           echo "    files after copying: " $PWD
-          find . -type f -path '*/lib*/*'  -ls
+          find . -type f -path '*.*'  -ls
 
 
 ## execute `process` once for each file
