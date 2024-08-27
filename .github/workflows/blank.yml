@@ -3,8 +3,10 @@ env:
   SOURCE_REPO: mmikeww/AHK-v2-script-converter
   AUTOMATIC_MONITOR: true
   FILES: "." # seperate multiple entries with ,
-  FILES_NEW: "*.ahk" # seperate multiple entries with ,
-  # EXTRA: mv LICENSE LICENSE_some_repo # do an extra command like renaming
+  FILES_NEW: "*" # seperate multiple entries with ,
+  
+  EXTRA: mv "*.*" "lib/" # do an extra command like renaming
+  
   USERNAME: ${{ github.actor }} 
   ADDRESS_SUFFIX: users.noreply.github.com
   TOKEN_NAME: ACCESS_TOKEN # name of token defined in the target repo's settings, needed for private repos
