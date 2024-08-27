@@ -90,7 +90,7 @@ jobs:
           cd $PATH_SOURCE_CHECKOUT
           cp -u -R $FILES_NEW ../
           cd ..
-          mk9dir lib
+          mkdir lib
   #    - name: Check for changes
   #      if: env.exiting1 != 'true'
   #      run: |
