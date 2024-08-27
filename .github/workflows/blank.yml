@@ -4,7 +4,7 @@ env:
   AUTOMATIC_MONITOR: true
   FILES: "." # seperate multiple entries with ,
   FILES_NEW: "*.ahk" # seperate multiple entries with ,
-  # EXTRA: mv LICENSE LICENSE_some_repo # do an extra command like renaming
+  EXTRA: mv *.ahk lib # do an extra command like renaming
   USERNAME: ${{ github.actor }} 
   ADDRESS_SUFFIX: users.noreply.github.com
   TOKEN_NAME: ACCESS_TOKEN # name of token defined in the target repo's settings, needed for private repos
@@ -90,6 +90,7 @@ jobs:
           cd $PATH_SOURCE_CHECKOUT
           cp -u -R $FILES_NEW ../
           cd ..
+          mk9dir lib
   #    - name: Check for changes
   #      if: env.exiting1 != 'true'
   #      run: |
