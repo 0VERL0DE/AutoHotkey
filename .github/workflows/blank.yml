@@ -76,7 +76,7 @@ jobs:
         run: |
           cd $PATH_SOURCE_CHECKOUT
           $EXTRA
-          cp -u $FILES_NEW ../
+          cp -u -R $FILES_NEW ../
           cd ..
 
       - name: Check for changes
