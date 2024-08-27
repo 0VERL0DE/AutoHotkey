@@ -106,16 +106,16 @@ jobs:
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
           echo "    files in " $PWD " matching search action: "
-          find . -type f -path '*/lib*/*.ahk'  -ls
+          find . -type f -path '*/lib*/*.*'  -ls
 
           echo "    copying files..."
-          find . -type f -path '*/lib*/*.ahk'  -exec cp {} ../ \;
+          find . -type f -path '*/lib*/*.*'  -exec cp {} ../ \;
         
 
           # cp -u -R "*/lib/*" ../
           cd ..
           echo "    files after copying: " $PWD
-          find . -type f -path '*.*'  -ls
+          find . -type f -path '*/lib*/*.*'  -ls
 
 
 ## execute `process` once for each file
