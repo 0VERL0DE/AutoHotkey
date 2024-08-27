@@ -103,15 +103,15 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
+          echo "   files in " $PWD " matching search action: "
+          find . -type f -path '*lib*/*.*'  -ls
           
           find . -type f -path '*lib*/*.*'  -exec cp -u {} ../ \;
         
 
              # cp -u -R "*/lib/*" ../
-          echo "From dir " $PWD ", copied all files from relpath " $FILES_MATCHING_FILTER_ARRAY " into " $PWD
-          ls $PWD
           cd ..
-          echo "Return to dir " $PWD
+          echo "    all files in " $PWD
           ls $PWD
 
 
