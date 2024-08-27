@@ -69,12 +69,14 @@ jobs:
           repository: ${{ env.SOURCE_REPO }}
           path: ${{ env.PATH_SOURCE_CHECKOUT }}
 
+          # cp -u $FILES_NEW ../
+
       - name: Update
         if: env.exiting1 != 'true'
         run: |
           cd $PATH_SOURCE_CHECKOUT
           $EXTRA
-          cp -u $FILES_NEW ../
+          cp -u "*.*" ../
           cd ..
 
       - name: Check for changes
