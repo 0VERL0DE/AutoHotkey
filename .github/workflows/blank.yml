@@ -82,7 +82,7 @@ jobs:
       - name: Checkout files
         uses: Bhacaz/checkout-files@v2
         with:
-         files: "*.*"
+         files: ""
 
 
       - name: Check for changes
