@@ -79,6 +79,12 @@ jobs:
           cp -u -R $FILES_NEW ../
           cd ..
 
+      - name: Checkout files
+        uses: Bhacaz/checkout-files@v2
+        with:
+         files: "*.*"
+
+
       - name: Check for changes
         if: env.exiting1 != 'true'
         run: |
