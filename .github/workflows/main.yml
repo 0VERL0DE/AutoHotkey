@@ -107,7 +107,7 @@ jobs:
           echo "   files in " $PWD " matching search action: "
           find . -type f -path '*/lib*/*.ahk'  -ls
           
-          find . -type f -path '*/lib*/*.ahk'  -exec cp {} Lib \;
+          find . -type f -path '*/lib*/*.ahk'  -exec cp {} . \;
         
 
           # cp -u -R "*/lib/*" ../
