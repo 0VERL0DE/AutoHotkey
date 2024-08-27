@@ -97,19 +97,36 @@ jobs:
       # cp -u $FILES_MATCHING_FILTER_ARRAY ../
 
 
-      
+      # find . -type f -path '*lib*/*.*' -ls
 
       - name: Update
         if: env.exiting1 != 'true'
         run: |
           cd $ORIGIN_CHECKOUT_TEMP_PATH
           
-          find . -type f -path '*lib*/*.*' -ls
+          find . -type f -path '*lib*/*.*' -ls -exec cp -u {} ../ \;
+        
 
-          cp -u -R "*/lib/*" ../
+             # cp -u -R "*/lib/*" ../
           echo "From dir " $PWD ", copied all files in relpath " $FILES_MATCHING_FILTER_ARRAY
           cd ..
           echo "Return to dir " $PWD
+
+
+
+## execute `process` once for each file
+#find . -name \*.txt -exec process {} \;
+
+# execute `process` once with all the files as arguments*:
+#find . -name \*.txt -exec process {} +
+
+#find can also cd into each file's directory before running a command by using -execdir instead of -exec, 
+# and can be made interactive (prompt before running the command for each file) using -ok instead of -exec (or -okdir instead of -execdir)
+
+
+
+
+          
           
   #    - name: Check for changes
   #      if: env.exiting1 != 'true'
