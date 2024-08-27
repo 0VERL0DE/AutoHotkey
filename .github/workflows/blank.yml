@@ -16,8 +16,8 @@ env:
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
-  workflow_dispatch:
-  push:
+   workflow_dispatch
+#  push:
 #    branches:
 #      - ${{ env.TARGET_BRANCH }}
 #    paths:
