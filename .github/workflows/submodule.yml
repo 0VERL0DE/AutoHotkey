@@ -97,6 +97,9 @@ jobs:
           if git diff --quiet; then
             echo "No changes detected. Exiting."
             echo "exiting2=true" >> $GITHUB_ENV
+          else
+            echo "Changes detected. Displaying diff:"
+            git diff
           fi
           
           
