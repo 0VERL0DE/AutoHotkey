@@ -9,7 +9,7 @@ jobs:
   pull-submodule:
     runs-on: ubuntu-latest
     permissions:
-      .contents: write
+      contents: write
     
     steps:
       - name: checkout own repository
