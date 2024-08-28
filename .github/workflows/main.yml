@@ -42,7 +42,6 @@ jobs:
       - name: Clean Workspace Folder
         run: |
          echo "Cleaning up " $PWD 
-         cd /
          rm -rf ./* || true
          rm -rf ./.??* || true
          echo "Done."
