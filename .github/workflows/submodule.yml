@@ -15,7 +15,7 @@ jobs:
        - name: Checkout this repository
          uses: actions/checkout@v4
          with: 
-             set-safe-directory: true
+             set-safe-directory: false
       
        - name: CheckOut Sitrep
          run: |
