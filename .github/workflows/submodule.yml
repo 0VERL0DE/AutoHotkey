@@ -16,11 +16,11 @@ jobs:
          uses: actions/checkout@v4 
          with: 
              set-safe-directory: false
-             path: ../thisrepo_copy
+             path: thisrepo_copy
       
        - name: CheckOut Sitrep
          run: |
-           cd ../thisrepo_copy
+           cd thisrepo_copy
            ls
 
       
