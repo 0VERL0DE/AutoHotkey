@@ -40,7 +40,7 @@ jobs:
       - name: Test Checkout
         run: |
           echo "files in current dir ( "$PWD" ): "
-          ls
+          ls .
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
@@ -78,8 +78,9 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $PATH_SOURCE_CHECKOUT
+          echo "moved to checkout dir: " $PATH_SOURCE_CHECKOUT
           cp -r -u $FILES_NEW ../
-          ls
+          ls -Alt
           cd ..
   #        $EXTRA
       - name: Check for changes
