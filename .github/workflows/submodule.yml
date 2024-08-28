@@ -20,6 +20,5 @@ jobs:
        - name: CheckOut Sitrep
          run: |
            ls
-
       
       
