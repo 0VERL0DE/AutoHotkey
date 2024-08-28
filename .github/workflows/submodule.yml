@@ -14,8 +14,10 @@ jobs:
     steps:
       - name: checkout own repository
         run: |
-          git clone $GITHUB_REPOSITORY
-          echo "workspace: " $GITHUB_WORKSPACE
+          git clone https://github.com/0VERL0DE/AutoHotkey.git tempdir
+          ls
+          cd tempdir
+          ls
         
       
       
