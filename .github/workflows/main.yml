@@ -52,6 +52,11 @@ jobs:
           mkdir -v -p testfolder
           echo "Created new folder in " $PWD
           ls
+
+      - name: try to climb               # move one level up
+        run: |
+          cd ../ 
+          echo "now in " $PWD
       
       - name: Checkout
         if: env.exiting1 != 'true'
