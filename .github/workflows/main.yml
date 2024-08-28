@@ -14,7 +14,7 @@ env:
   # TARGET_BRANCH: target_alternate_branch # uncomment to monitor a non default target branch
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
-  ORIGIN_CHECKOUT_TEMP_PATH: temp_folder_2
+  ORIGIN_CHECKOUT_TEMP_PATH: remote_repo_clone
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 
@@ -154,7 +154,7 @@ jobs:
       - name: Update
         if: env.exiting1 != 'true'
         run: |
-          cd $ORIGIN_CHECKOUT_TEMP_PATH
+          cd AutoHotkey\remote_repo_clone
           echo "    files in " $PWD " matching search action: "
           find . -type f -path '*/lib*/*.*'  -ls
 
