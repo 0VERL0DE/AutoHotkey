@@ -13,13 +13,13 @@ jobs:
     
     steps:
        - name: Checkout this repository
-         uses: actions/checkout@v4
+         uses: actions/checkout@v4 ../thisrepo_copy
          with: 
              set-safe-directory: false
       
        - name: CheckOut Sitrep
          run: |
-           echo cd thisrepo
+           cd ../thisrepo_copy
            ls
 
       
