@@ -13,9 +13,10 @@ jobs:
     
     steps:
        - name: Checkout this repository
-         uses: actions/checkout@v4 ../thisrepo_copy
+         uses: actions/checkout@v4 
          with: 
              set-safe-directory: false
+             path: ../thisrepo_copy
       
        - name: CheckOut Sitrep
          run: |
