@@ -54,7 +54,6 @@ jobs:
         run: |
          echo "Cleaning up " $PWD 
          
-          
          rm -rf ./* || true
          rm -rf ./.??* || true
          echo "Done."
@@ -71,6 +70,7 @@ jobs:
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
         with: 
+          path: 'folderforcheckout'
           sparse-checkout: |
             lib
             inc
