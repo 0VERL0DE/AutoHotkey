@@ -62,8 +62,7 @@ jobs:
 
       - name: try to create folder
         run: |
-          cd ../
-          mkdir -v -p testfolder
+          mkdir -v -p folderforcheckout
           echo "Created new folder in " $PWD
           ls
 
