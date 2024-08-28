@@ -3,7 +3,7 @@ env:
   SOURCE_REPO: Descolada/Acc-v2
   AUTOMATIC_MONITOR: true
   # FILES: "" # seperate multiple entries with ,
-  FILES_NEW: "" # seperate multiple entries with ,
+  FILES_NEW: "*" # seperate multiple entries with ,
 #   EXTRA: mv LICENSE LICENSE_some_repo # do an extra command like renaming
   USERNAME: ${{ github.actor }}
   ADDRESS_SUFFIX: users.noreply.github.com
