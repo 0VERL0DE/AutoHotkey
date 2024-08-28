@@ -89,7 +89,10 @@ jobs:
       - name: simulate diff
         run: |
           echo "testing diff" 
-          git diff
+          if git diff --quiet; then
+            echo "yes"
+          else
+            echo "no"
           echo "end of diff" 
 
         # diff --quiet exits with 1 if diff found, 0 if no diff
