@@ -83,7 +83,8 @@ jobs:
       - name: Report after first checkout
         run: |
          echo "Contents of " $PWD ": "
-         find $PWD -type f -path '*.*' -ls
+         ls -Alt
+        # find $PWD -type f -path '*.*' -ls
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.ORIGIN_BRANCH
