@@ -68,8 +68,11 @@ jobs:
           repository: ${{ env.ORIGIN_REPO_PATH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
           path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
+          fetch-depth: 0
           sparse-checkout: |
             lib
+            inc
+          sparse-checkout-cone-mode: false
           
       - name: Checkout source without token but with branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && env.ORIGIN_BRANCH
@@ -78,8 +81,11 @@ jobs:
           repository: ${{ env.ORIGIN_REPO_PATH }}
           ref: ${{ env.ORIGIN_BRANCH }}
           path: ${{ env.ORIGIN_CHECKOUT_TEMP_PATH }}
+          fetch-depth: 0
           sparse-checkout: |
             lib
+            inc
+          sparse-checkout-cone-mode: false
 
       - name: Checkout source without token and without branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && !env.ORIGIN_BRANCH
@@ -93,7 +99,7 @@ jobs:
             inc
           sparse-checkout-cone-mode: false
 
-      - name: Report
+      - name: List files in temp dir
         run: |
          echo "Origin repo cloned to " $ORIGIN_CHECKOUT_TEMP_PATH ": "
          find $PWD -type f -path '*.*' -ls
@@ -111,6 +117,9 @@ jobs:
           cd $ORIGIN_CHECKOUT_TEMP_PATH
           echo "    files in " $PWD " matching search action: "
           find . -type f -path '*/lib*/*.*'  -ls
+
+          fi
+
 
           echo "    copying files..."
           find . -type f -path '*/lib*/*.*'  -exec cp {} . \;
