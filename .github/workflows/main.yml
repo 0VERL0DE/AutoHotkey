@@ -39,22 +39,22 @@ jobs:
           echo "Updating $GITHUB_ENV with exiting1=true" 
           echo "exiting1=true" >> $GITHUB_ENV
 
-      # CHECK OUT
-      - name: Try to get to root
-        run: | 
-          echo "Trying to find rout"
-          cd /
-          echo "Root: " $PWD
-          cd ../
-          echo "Root: " $PWD
-
       - name: Clean Workspace Folder
         run: |
          echo "Cleaning up " $PWD 
+         cd /
          rm -rf ./* || true
          rm -rf ./.??* || true
          echo "Done."
-         
+
+
+      - name: try to create folder
+        run: |
+          mkdir testfolder
+          cd /
+          echo " contents of root now: " 
+          find . -type f -path '*.*' -ls
+      
       - name: Checkout
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
