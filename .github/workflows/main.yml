@@ -50,9 +50,8 @@ jobs:
       - name: try to create folder
         run: |
           mkdir -v -p testfolder
-          echo " contents of root now: " 
+          echo "Created new folder in " $PWD
           ls
-      # find . -type f -path '*.*' -ls
       
       - name: Checkout
         if: env.exiting1 != 'true'
