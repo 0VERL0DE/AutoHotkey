@@ -39,6 +39,13 @@ jobs:
           echo "Updating $GITHUB_ENV with exiting1=true" 
           echo "exiting1=true" >> $GITHUB_ENV
 
+
+      - name: try to climb               # move one level up
+        run: |
+          cd ../ 
+          echo "now in " $PWD
+
+    
       - name: Clean Workspace Folder
         run: |
          echo "Cleaning up " $PWD 
@@ -53,11 +60,7 @@ jobs:
           echo "Created new folder in " $PWD
           ls
 
-      - name: try to climb               # move one level up
-        run: |
-          cd ../ 
-          echo "now in " $PWD
-      
+
       - name: Checkout
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
