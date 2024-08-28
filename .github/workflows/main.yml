@@ -47,16 +47,13 @@ jobs:
 
       - name: try to climb               # move one level up
         run: |
-          cd ../ 
-          echo "now in " $PWD
-
+          echo "Starting dir: " $PWD
+# cd only works for one run, resets afterwards → 
     
       - name: Clean Workspace Folder
         run: |
          echo "Cleaning up " $PWD 
          
-         cd ../ 
-         echo "now in " $PWD
           
          rm -rf ./* || true
          rm -rf ./.??* || true
