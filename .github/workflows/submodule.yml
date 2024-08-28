@@ -12,12 +12,13 @@ jobs:
       contents: write
     
     steps:
-      - name: checkout own repository
-        run: |
-          git clone https://github.com/0VERL0DE/AutoHotkey.git tempdir
-          ls
-          cd tempdir
-          ls
-        
+       - name: Checkout this repository
+         uses: actions/checkout@v4
+      
+       - name: CheckOut Sitrep
+         run: |
+           echo cd thisrepo
+           ls
+
       
       
