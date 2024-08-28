@@ -142,7 +142,7 @@ jobs:
       - name: List files in temp dir
         run: |
          echo "Origin repo cloned to " $ORIGIN_CHECKOUT_TEMP_PATH ": "
-         find $PWD -type f -path '*.*' -ls
+         find . -type f -path '*.*' -ls
 
           
       #           $EXTRA
