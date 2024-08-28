@@ -50,7 +50,6 @@ jobs:
       - name: try to create folder
         run: |
           mkdir testfolder
-          cd /
           echo " contents of root now: " 
           find . -type f -path '*.*' -ls
       
