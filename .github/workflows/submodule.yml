@@ -78,9 +78,10 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $PATH_SOURCE_CHECKOUT
-          echo "moved to checkout dir: " $PATH_SOURCE_CHECKOUT
+          echo "moving files to checkout dir: " $PATH_SOURCE_CHECKOUT
           $EXTRA
-          cp -r -u $FILES_NEW ../
+          cp -r -p -u $FILES_NEW ../
+          echo "files moved:"
           ls -Alt
           cd ..
   #        $EXTRA
