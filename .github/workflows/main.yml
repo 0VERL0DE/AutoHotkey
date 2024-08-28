@@ -44,6 +44,12 @@ jobs:
       - name: Checkout
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
+        with: 
+          sparse-checkout: |
+            lib
+            inc
+          sparse-checkout-cone-mode: false
+
 
       - name: Report after first checkout
         run: |
