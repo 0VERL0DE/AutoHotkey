@@ -43,9 +43,10 @@ jobs:
 
       - name: Clean Workspace Folder
         run: |
+         echo "Cleaning up " $PWD 
          rm -rf ./* || true
          rm -rf ./.??* || true
-
+         echo "Done."
          
       - name: Checkout
         if: env.exiting1 != 'true'
