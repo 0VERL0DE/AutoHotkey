@@ -42,8 +42,11 @@ jobs:
       # CHECK OUT
       - name: Try to get to root
         run: | 
-          echo "trying to find rout"
+          echo "Trying to find rout"
           cd /
+          echo "Root: " $PWD
+          cd ../
+          echo "Root: " $PWD
 
       - name: Clean Workspace Folder
         run: |
