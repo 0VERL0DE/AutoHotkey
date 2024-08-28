@@ -49,9 +49,10 @@ jobs:
 
       - name: try to create folder
         run: |
-          mkdir testfolder
+          mkdir -v -p testfolder
           echo " contents of root now: " 
-          find . -type f -path '*.*' -ls
+          ls
+      # find . -type f -path '*.*' -ls
       
       - name: Checkout
         if: env.exiting1 != 'true'
