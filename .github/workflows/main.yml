@@ -40,7 +40,13 @@ jobs:
           echo "exiting1=true" >> $GITHUB_ENV
 
       # CHECK OUT
-          
+
+      - name: Clean Workspace Folder
+        run: |
+         rm -rf ./* || true
+         rm -rf ./.??* || true
+
+         
       - name: Checkout
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
