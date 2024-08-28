@@ -40,6 +40,10 @@ jobs:
           echo "exiting1=true" >> $GITHUB_ENV
 
       # CHECK OUT
+      - name: Try to get to root
+        run: | 
+          echo "trying to find rout"
+          cd /
 
       - name: Clean Workspace Folder
         run: |
