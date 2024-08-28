@@ -61,7 +61,7 @@ jobs:
 
       - name: try to create folder
         run: |
-          mkdir -v -p folderforcheckout
+          mkdir -v -p AutoHotkey/AutoHotkey
           echo "Created new folder in " $PWD
           ls
 
@@ -74,7 +74,6 @@ jobs:
         if: env.exiting1 != 'true'
         uses: actions/checkout@v4
         with: 
-          path: folderforcheckout
           sparse-checkout: |
             lib
             inc
