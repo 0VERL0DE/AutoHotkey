@@ -1,0 +1,21 @@
+
+
+
+on: # Remove # below for non default branches
+   workflow_dispatch
+
+
+jobs:
+  pull-submodule:
+    runs-on: ubuntu-latest
+    permissions:
+      .contents: write
+    
+    steps:
+      - name: checkout own repository
+        run: |
+          git clone $GITHUB_REPOSITORY
+          echo "workspace: " $GITHUB_WORKSPACE
+        
+      
+      
