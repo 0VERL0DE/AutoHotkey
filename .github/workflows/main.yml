@@ -17,6 +17,7 @@ env:
   ORIGIN_CHECKOUT_TEMP_PATH: temp_folder_2
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
+
 on: # Remove # below for non default branches
   workflow_dispatch:
   push:
@@ -25,9 +26,13 @@ on: # Remove # below for non default branches
 #    paths:
 #      - ${{ env.TARGET_PATH }}
 
+  
 jobs:
   pull-file:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: testworkingdirectory
     permissions:
       contents: write
     steps:
