@@ -77,6 +77,12 @@ jobs:
           cp -u $FILES_NEW ../
           cd ..
 
+      - name: simulate diff
+        run: |
+          echo "current dir: " $PWD 
+          echo "folder 1: " $PWD
+          echo "folder 2: " 
+          
       - name: Check for changes
         if: env.exiting1 != 'true'
         run: |
