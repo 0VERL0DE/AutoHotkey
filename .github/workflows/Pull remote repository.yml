@@ -85,6 +85,10 @@ jobs:
           echo "folder 2: " $PWD/temp_folder
           ls -Alt $PWD/temp_folder
 
+      - name: test diff
+        run: |
+          git diff $PWD $PWD/temp_folder
+
           
       - name: Check for changes
         if: env.exiting1 != 'true'
