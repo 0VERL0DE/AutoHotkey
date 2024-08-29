@@ -87,6 +87,8 @@ jobs:
 
       - name: test diff
         run: |
+          echo "current pwd: " $PWD
+          echo "current dir: " .
           git diff --no-index . temp_folder
 
           
