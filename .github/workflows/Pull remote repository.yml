@@ -87,7 +87,7 @@ jobs:
 
       - name: test diff
         run: |
-          git diff $PWD $PWD/temp_folder
+          git diff . temp_folder
 
           
       - name: Check for changes
