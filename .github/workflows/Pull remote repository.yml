@@ -83,12 +83,13 @@ jobs:
           echo "current dir: " $PWD 
           echo "folder 1: " $PWD
           echo "folder 2: " $PWD/temp_folder
+          ls -Alt $PWD/temp_folder
 
           
       - name: Check for changes
         if: env.exiting1 != 'true'
         run: |
-          if git diff --quiet; then
+          if git diff --quiet $PWD $PWD/temp_folder ; then
             echo "No changes detected. Exiting."
             echo "exiting2=true" >> $GITHUB_ENV
           fi
