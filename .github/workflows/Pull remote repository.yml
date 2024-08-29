@@ -82,7 +82,8 @@ jobs:
           ls -Alt
           echo "current dir: " $PWD 
           echo "folder 1: " $PWD
-          echo "folder 2: " 
+          echo "folder 2: " $PWD/temp_folder
+
           
       - name: Check for changes
         if: env.exiting1 != 'true'
