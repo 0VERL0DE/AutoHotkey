@@ -79,6 +79,7 @@ jobs:
 
       - name: simulate diff
         run: |
+          ls -Alt
           echo "current dir: " $PWD 
           echo "folder 1: " $PWD
           echo "folder 2: " 
