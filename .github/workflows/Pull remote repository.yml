@@ -97,9 +97,11 @@ jobs:
 
       - name: Test Diff
         run: |
+          ABSOLUTE_PWD=$(realpath "$PWD")
+          ABSOLUTE_LIB_PATH=$(realpath "$LIB_PATH")
+
           echo "current pwd: $PWD"
-          echo "current dir: ."
-          git diff --name-only --quiet --no-index $PWD $LIB_PATH
+          git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ABSOLUTE_LIB_PATH
           
       - name: Check for changes
         if: env.exiting1 != 'true'
