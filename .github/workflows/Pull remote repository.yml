@@ -89,7 +89,7 @@ jobs:
         run: |
           echo "current pwd: " $PWD
           echo "current dir: " .
-          git diff --no-index temp_folder .
+          git diff  --name-only --no-index temp_folder .
 
           
       - name: Check for changes
