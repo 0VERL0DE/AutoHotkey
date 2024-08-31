@@ -35,15 +35,16 @@ jobs:
           echo "Set not to run automatically. Exiting."
           echo "exiting1=true" >> $GITHUB_ENV
 
-      - name: Find THISREPO lib path
-        run: |
-          THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
-          echo "Found THIS repo lib location: $THISREPO_LIB_PATH"
-
       - name: Checkout this repo (clone to this runner workdir)
         if: env.exiting1 != 'true'
         uses: actions/checkout@v3
 
+      - name: Find THISREPO lib path
+        run: |
+          THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
+          echo "Found THIS repo lib location: $THISREPO_LIB_PATH"
+          echo "TEMP repo lib location: " $TEMP_PATH$THISREPO_LIB_PATH
+          
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
         uses: actions/checkout@v3
