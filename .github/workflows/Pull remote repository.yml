@@ -17,6 +17,7 @@ env:
   THISREPO_LIB_RELPATH: ''
   TEMPREPO_LIB_RELPATH: ''
   TEMPREPO_LIB_ABSPATH: ''
+  THISREPO_ROOT_ABSPATH: ''
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -36,6 +37,7 @@ jobs:
         run: |
           echo "Set not to run automatically. Exiting."
           echo "exiting1=true" >> $GITHUB_ENV
+          THISREPO_ROOT_ABSPATH=$PWD
 
       - name: Checkout this repo (clone to this runner workdir)
         if: env.exiting1 != 'true'
@@ -43,10 +45,10 @@ jobs:
 
       - name: Get paths to lib dir
         run: |
-          THISREPO_LIB_ABSPATH=$(find $PWD -type d -iname "lib" | head -n 1)
-          THISREPO_LIB_RELPATH=$(realpath --relative-to="$PWD" "$THISREPO_LIB_ABSPATH")"
+          THISREPO_LIB_ABSPATH=$(find $THISREPO_ROOT_ABSPATH -type d -iname "lib" | head -n 1)
+          THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"
           TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH
-          TEMPREPO_LIB_ABSPATH=$PWD/$TEMP_PATH/$(realpath --relative-to="$PWD" "$TEMPREPO_LIB_RELPATH")"
+          TEMPREPO_LIB_ABSPATH=$PWD/$TEMP_PATH/$(realpath --relative-to="$$TEMPPATH" "$TEMPREPO_LIB_RELPATH")"
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
