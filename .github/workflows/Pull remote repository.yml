@@ -45,12 +45,11 @@ jobs:
 
       - name: Get paths to lib dir
         run: |
-
-          THISREPO_ROOT_ABSPATH=$PWD
-          THISREPO_LIB_ABSPATH=$(find $THISREPO_ROOT_ABSPATH -type d -iname "lib" | head -n 1)
+          THISREPO_ROOT_ABSPATH="$PWD"
+          THISREPO_LIB_ABSPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)
           THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")
-          TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH
-          TEMPREPO_LIB_ABSPATH=$PWD/$TEMP_PATH/$(realpath --relative-to="$TEMPPATH" "$TEMPREPO_LIB_RELPATH")
+          TEMPREPO_LIB_ABSPATH="$THISREPO_ROOT_ABSPATH/$TEMP_PATH/$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"
+          TEMPREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMPREPO_LIB_ABSPATH")
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
