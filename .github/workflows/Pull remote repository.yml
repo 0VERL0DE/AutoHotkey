@@ -118,21 +118,27 @@ jobs:
             echo "continue..."
           fi
           
-      - name: Commit
-        if: env.exiting1 != 'true' && env.exiting2 != 'true'
-        run: |
-          git config user.name "$USERNAME"
-          git config user.email "$USERNAME@$ADDRESS_SUFFIX"
-          git add $ABSOLUTE_LIB_PATH
-          git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
+          #git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
 
-# rsync -av --exclude='.git' --exclude='.*' "$LIB_PATH/" myrepo/lib/
-
-      - name: Push
-        if: env.exiting1 != 'true' && env.exiting2 != 'true'
+      - name: Copy
         run: |
-          if [ -n "$TARGET_BRANCH" ]; then
-            git push origin $TARGET_BRANCH
-          else
-            git push
-          fi
+          rsync -av --update --exclude='.git' --exclude='.*' "$LIB_PATH/" myrepo/lib/
+          echo "sync completed!"
+
+        
+ #    - name: Commit
+ #       if: env.exiting1 != 'true' && env.exiting2 != 'true'
+ #       run: |
+ #         git config user.name "$USERNAME"
+ #         git config user.email "$USERNAME@$ADDRESS_SUFFIX"
+ #         git add $ABSOLUTE_LIB_PATH
+
+
+ #     - name: Push
+ #       if: env.exiting1 != 'true' && env.exiting2 != 'true'
+ #       run: |
+ #         if [ -n "$TARGET_BRANCH" ]; then
+ #           git push origin $TARGET_BRANCH
+ #         else
+ #           git push
+ #         fi
