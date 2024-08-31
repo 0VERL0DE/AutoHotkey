@@ -1,6 +1,6 @@
 name: Pull Files from Another Repository on Push
 env:
-  SOURCE_REPO: Descolada/AHK-v2-libraries  #lwcorp/lwsmtp-server
+  ORIGINREPO: Descolada/AHK-v2-libraries  #lwcorp/lwsmtp-server
   AUTOMATIC_MONITOR: true
   FILES: "*" #  "*.au3 LICENSE" # separate multiple entries with ,
   FILES_NEW: "*.au3 LICENSE*" # separate multiple entries with ,
@@ -12,7 +12,8 @@ env:
   # TARGET_BRANCH: target_alternate_branch # uncomment to monitor a non default target branch
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
-  PATH_SOURCE_CHECKOUT: temp_folder
+  THISREPO_TEMP_PATH: temp_folder
+  ORIGINREPO_LIB_PATH: ''   #path to Lib inside origin repo
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -33,6 +34,16 @@ jobs:
           echo "Set not to run automatically. Exiting."
           echo "exiting1=true" >> $GITHUB_ENV
 
+      - name: Find lib directory in OtherRepo
+        id: find-lib
+        run: |
+          ORIGINREPO_LIB_PATH=$(find $THISREPO_TEMP_PATH -type d -iname "lib" | head -n 1)
+          echo "test this repo location: " find $PWD -type d -iname "lib" | head -n 1)
+
+          echo "Found lib directory in OtherRepo at: $ORIGINREPO_LIB_PATH"
+          
+      # echo "lib-path=$ORIGINREPO_LIB_PATH" >> $GITHUB_ENV
+
       - name: Checkout
         if: env.exiting1 != 'true'
         uses: actions/checkout@v3
@@ -41,50 +52,44 @@ jobs:
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
         uses: actions/checkout@v3
         with:
-          repository: ${{ env.SOURCE_REPO }}
+          repository: ${{ env.ORIGINREPO }}
           ref: ${{ env.SOURCE_BRANCH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          path: ${{ env.THISREPO_TEMP_PATH }}
 
       - name: Checkout source with token but without branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && !env.SOURCE_BRANCH
         uses: actions/checkout@v3
         with:
-          repository: ${{ env.SOURCE_REPO }}
+          repository: ${{ env.ORIGINREPO }}
           token: ${{ secrets[env.TOKEN_NAME] }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          path: ${{ env.THISREPO_TEMP_PATH }}
 
       - name: Checkout source without token but with branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && env.SOURCE_BRANCH
         uses: actions/checkout@v3
         with:
-          repository: ${{ env.SOURCE_REPO }}
+          repository: ${{ env.ORIGINREPO }}
           ref: ${{ env.SOURCE_BRANCH }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          path: ${{ env.THISREPO_TEMP_PATH }}
 
       - name: Checkout source without token and without branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && !env.SOURCE_BRANCH
         uses: actions/checkout@v3
         with:
-          repository: ${{ env.SOURCE_REPO }}
-          path: ${{ env.PATH_SOURCE_CHECKOUT }}
+          repository: ${{ env.ORIGINREPO }}
+          path: ${{ env.THISREPO_TEMP_PATH }}
 
       - name: Update
         if: env.exiting1 != 'true'
         run: |
-          cd $PATH_SOURCE_CHECKOUT
+          cd $THISREPO_TEMP_PATH
           $EXTRA
           rsync -av --exclude='.git' --exclude='.*' . ../
           cd ..
 #          cp -rv . ../
 
 
-      - name: Find lib directory in OtherRepo
-        id: find-lib
-        run: |
-          LIB_PATH=$(find $PATH_SOURCE_CHECKOUT -type d -iname "lib" | head -n 1)
-          echo "lib-path=$LIB_PATH" >> $GITHUB_ENV
-          echo "Found lib directory in OtherRepo at: $LIB_PATH"
 
         
       - name: simulate diff
@@ -99,30 +104,30 @@ jobs:
         run: |
           
           ABSOLUTE_PWD=$(pwd)
-          if [[ "$LIB_PATH" = /* ]]; then
-            ABSOLUTE_LIB_PATH="$LIB_PATH"
+          if [[ "$ORIGINREPO_LIB_PATH" = /* ]]; then
+            ORIGINREPO_ORIGINREPO_LIB_PATH="$ORIGINREPO_LIB_PATH"
           else
-            ABSOLUTE_LIB_PATH="$ABSOLUTE_PWD/$LIB_PATH"
+            ORIGINREPO_ORIGINREPO_LIB_PATH="$ABSOLUTE_PWD/$ORIGINREPO_LIB_PATH"
           fi
 
-          git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ABSOLUTE_LIB_PATH
+          git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ORIGINREPO_LIB_PATH
           
       - name: Check for changes
         if: env.exiting1 != 'true'
         run: |
-          if git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ABSOLUTE_LIB_PATH > /dev/null 2>&1; then
+          if git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ORIGINREPO_LIB_PATH > /dev/null 2>&1; then
             echo "No changes detected. Exiting."
             echo "exiting2=true" >> $GITHUB_ENV
           else
             echo "changes detected!"
-            echo "copying content from " $ABSOLUTE_LIB_PATH " to " $ABSOLUTE_PWD
+            echo "copying content from " $ORIGINREPO_LIB_PATH " to " $ABSOLUTE_PWD
           fi
           
-      #git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
+      #git commit -m "Pulled files from $THE_SERVER/$ORIGINREPO."
 
       - name: Copy
         run: |
-          rsync -av --update --exclude='.git' --exclude='.*' "$ABSOLUTE_LIB_PATH" "$ABSOLUTE_PWD"
+          rsync -av --update --exclude='.git' --exclude='.*' "$ORIGINREPO_LIB_PATH" "$ABSOLUTE_PWD"
           echo "sync completed!"
 
         
@@ -131,7 +136,7 @@ jobs:
  #       run: |
  #         git config user.name "$USERNAME"
  #         git config user.email "$USERNAME@$ADDRESS_SUFFIX"
- #         git add $ABSOLUTE_LIB_PATH
+ #         git add $ORIGINREPO_LIB_PATH
 
 
  #     - name: Push
