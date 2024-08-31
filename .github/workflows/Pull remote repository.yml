@@ -12,7 +12,7 @@ env:
   # TARGET_BRANCH: target_alternate_branch # uncomment to monitor a non default target branch
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
-  THISREPO_TEMP_PATH: temp_folder
+  TEMP_PATH: temp_folder
   ORIGINREPO_LIB_PATH: ''   #path to Lib inside origin repo
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
@@ -47,7 +47,7 @@ jobs:
           repository: ${{ env.ORIGINREPO }}
           ref: ${{ env.SOURCE_BRANCH }}
           token: ${{ secrets[env.TOKEN_NAME] }}
-          path: ${{ env.THISREPO_TEMP_PATH }}
+          path: ${{ env.TEMP_PATH }}
 
       - name: Checkout source with token but without branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && !env.SOURCE_BRANCH
@@ -55,7 +55,7 @@ jobs:
         with:
           repository: ${{ env.ORIGINREPO }}
           token: ${{ secrets[env.TOKEN_NAME] }}
-          path: ${{ env.THISREPO_TEMP_PATH }}
+          path: ${{ env.TEMP_PATH }}
 
       - name: Checkout source without token but with branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && env.SOURCE_BRANCH
@@ -63,22 +63,22 @@ jobs:
         with:
           repository: ${{ env.ORIGINREPO }}
           ref: ${{ env.SOURCE_BRANCH }}
-          path: ${{ env.THISREPO_TEMP_PATH }}
+          path: ${{ env.TEMP_PATH }}
 
       - name: Checkout source without token and without branch
         if: env.exiting1 != 'true' && env.THE_SECRET == 'default_value' && !env.SOURCE_BRANCH
         uses: actions/checkout@v3
         with:
           repository: ${{ env.ORIGINREPO }}
-          path: ${{ env.THISREPO_TEMP_PATH }}
+          path: ${{ env.TEMP_PATH }}
 
 
       - name: Find lib directory in OtherRepo
         run: |
-          ORIGINREPO_LIB_PATH=$(find $ORIGINREPO -type d -iname "lib" | head -n 1)
-         
-          echo "test THIS repo location: " find $PWD -type d -iname "lib" | head -n 1)
-
+          THISREPO_LIB_PATH=find $PWD -type d -iname "lib" | head -n 1)
+          ORIGINREPO_LIB_PATH=$(find $TEMP_PATH -type d -iname "lib" | head -n 1)
+          
+          echo "Found THIS repo lib location: " find $PWD -type d -iname "lib" | head -n 1)
           echo "Found ORIGIN repo lib location: $ORIGINREPO_LIB_PATH"
           
       # echo "lib-path=$ORIGINREPO_LIB_PATH" >> $GITHUB_ENV
@@ -87,7 +87,7 @@ jobs:
       - name: Update
         if: env.exiting1 != 'true'
         run: |
-          cd $THISREPO_TEMP_PATH
+          cd $TEMP_PATH
           $EXTRA
           rsync -av --exclude='.git' --exclude='.*' . ../
           cd ..
