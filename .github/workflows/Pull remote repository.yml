@@ -115,7 +115,7 @@ jobs:
             echo "exiting2=true" >> $GITHUB_ENV
           else
             echo "changes detected!"
-            echo "copying content from $ABSOLUTE_LIB_PATH to $ABSOLUTE_PWD"
+            echo "copying content from " $ABSOLUTE_LIB_PATH " to " $ABSOLUTE_PWD
           fi
           
       #git commit -m "Pulled files from $THE_SERVER/$SOURCE_REPO."
