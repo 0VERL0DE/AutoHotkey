@@ -34,17 +34,9 @@ jobs:
           echo "Set not to run automatically. Exiting."
           echo "exiting1=true" >> $GITHUB_ENV
 
-      - name: Find lib directory in OtherRepo
-        id: find-lib
-        run: |
-          ORIGINREPO_LIB_PATH=$(find $THISREPO_TEMP_PATH -type d -iname "lib" | head -n 1)
-          echo "test this repo location: " find $PWD -type d -iname "lib" | head -n 1)
 
-          echo "Found lib directory in OtherRepo at: $ORIGINREPO_LIB_PATH"
-          
-      # echo "lib-path=$ORIGINREPO_LIB_PATH" >> $GITHUB_ENV
 
-      - name: Checkout
+      - name: Checkout this repo (clone to this runner workdir)
         if: env.exiting1 != 'true'
         uses: actions/checkout@v3
 
@@ -80,6 +72,18 @@ jobs:
           repository: ${{ env.ORIGINREPO }}
           path: ${{ env.THISREPO_TEMP_PATH }}
 
+
+      - name: Find lib directory in OtherRepo
+        run: |
+          ORIGINREPO_LIB_PATH=$(find $ORIGINREPO -type d -iname "lib" | head -n 1)
+         
+          echo "test THIS repo location: " find $PWD -type d -iname "lib" | head -n 1)
+
+          echo "Found ORIGIN repo lib location: $ORIGINREPO_LIB_PATH"
+          
+      # echo "lib-path=$ORIGINREPO_LIB_PATH" >> $GITHUB_ENV
+
+      
       - name: Update
         if: env.exiting1 != 'true'
         run: |
