@@ -97,8 +97,13 @@ jobs:
 
       - name: Test Diff
         run: |
-          ABSOLUTE_PWD=$(realpath "$PWD")
-          ABSOLUTE_LIB_PATH=$(realpath "$LIB_PATH")
+          
+          ABSOLUTE_PWD=$(pwd)
+          if [[ "$LIB_PATH" = /* ]]; then
+            ABSOLUTE_LIB_PATH="$LIB_PATH"
+          else
+            ABSOLUTE_LIB_PATH="$ABSOLUTE_PWD/$LIB_PATH"
+          fi
 
           echo "current pwd: $PWD"
           git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ABSOLUTE_LIB_PATH
