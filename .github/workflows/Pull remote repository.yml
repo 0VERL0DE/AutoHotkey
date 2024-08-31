@@ -37,6 +37,7 @@ jobs:
 
       - name: Find THISREPO lib path
         run: |
+          cd /
           THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
           echo "Found THIS repo lib location: $THISREPO_LIB_PATH"
 
