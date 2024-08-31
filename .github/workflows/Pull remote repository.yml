@@ -13,7 +13,8 @@ env:
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
   TEMP_PATH: temp_folder
-  ORIGINREPO_LIB_PATH: ''   #path to Lib inside origin repo
+  ORIGINREPO_LIB_PATH: ''  
+  THISREPO_LIB_PATH: ''   
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -34,7 +35,10 @@ jobs:
           echo "Set not to run automatically. Exiting."
           echo "exiting1=true" >> $GITHUB_ENV
 
-
+      - name: Find THISREPO lib path
+        run: |
+          THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
+          echo "Found THIS repo lib location: $THISREPO_LIB_PATH"
 
       - name: Checkout this repo (clone to this runner workdir)
         if: env.exiting1 != 'true'
@@ -73,13 +77,11 @@ jobs:
           path: ${{ env.TEMP_PATH }}
 
 
-      - name: Find lib directory in OtherRepo
+      - name: Find origin repo lib path
         run: |
-          THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
           ORIGINREPO_LIB_PATH=$(find $TEMP_PATH -type d -iname "lib" | head -n 1)
-          
-          echo "Found THIS repo lib location: $THISREPO_LIB_PATH"
           echo "Found ORIGIN repo lib location: $ORIGINREPO_LIB_PATH"
+
           
       # echo "lib-path=$ORIGINREPO_LIB_PATH" >> $GITHUB_ENV
 
