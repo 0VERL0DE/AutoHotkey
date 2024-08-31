@@ -95,12 +95,11 @@ jobs:
           echo "folder 2: " $PWD/temp_folder
           ls -Alt $PWD/temp_folder
 
-      - name: test diff
+      - name: Test Diff
         run: |
-          echo "current pwd: " $PWD
-          echo "current dir: " .
-          git diff -r --name-only  --quiet --no-index $PWD $LIB_PATH 
-
+          echo "current pwd: $PWD"
+          echo "current dir: ."
+          git diff --name-only --quiet --no-index $PWD $LIB_PATH
           
       - name: Check for changes
         if: env.exiting1 != 'true'
