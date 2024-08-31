@@ -89,7 +89,10 @@ jobs:
         run: |
           echo "current pwd: " $PWD
           echo "current dir: " .
-          git diff  --name-only  --exit-code  --no-index temp_folder .
+          if git diff  --name-only  --quiet  --no-index temp_folder . ; then
+            echo "changes detected"
+          else
+            echo "no changes detected....."
 
           
       - name: Check for changes
