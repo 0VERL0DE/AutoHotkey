@@ -74,16 +74,15 @@ jobs:
         run: |
           cd $PATH_SOURCE_CHECKOUT
           $EXTRA
-          rsync -av --exclude='.git' . ../
+          rsync -av --exclude='.git' --exclude='.*' . ../
           cd ..
 #          cp -rv . ../
-
 
 
       - name: Find lib directory in OtherRepo
         id: find-lib
         run: |
-          LIB_PATH=$(find $PATH_SOURCE_CHECKOUT -type d -name "lib" | head -n 1)
+          LIB_PATH=$(find $PATH_SOURCE_CHECKOUT -type d -iname "lib" | head -n 1)
           echo "lib-path=$LIB_PATH" >> $GITHUB_ENV
           echo "Found lib directory in OtherRepo at: $LIB_PATH"
 
