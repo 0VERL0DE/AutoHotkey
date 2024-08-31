@@ -113,6 +113,7 @@ jobs:
           if git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ABSOLUTE_LIB_PATH ; then
             echo "No changes detected. Exiting."
           else
+            echo "changes detected!"
             echo "exiting2=true" >> $GITHUB_ENV
           fi
           
