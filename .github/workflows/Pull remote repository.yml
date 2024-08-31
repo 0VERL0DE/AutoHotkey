@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "Set not to run automatically. Exiting."
           echo "exiting1=true" >> $GITHUB_ENV
-          THISREPO_ROOT_ABSPATH=$PWD
+
 
       - name: Checkout this repo (clone to this runner workdir)
         if: env.exiting1 != 'true'
@@ -45,6 +45,7 @@ jobs:
 
       - name: Get paths to lib dir
         run: |
+          THISREPO_ROOT_ABSPATH=$PWD
           THISREPO_LIB_ABSPATH=$(find $THISREPO_ROOT_ABSPATH -type d -iname "lib" | head -n 1)
           THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"
           TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH
