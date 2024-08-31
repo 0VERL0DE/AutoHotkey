@@ -75,7 +75,7 @@ jobs:
 
       - name: Find lib directory in OtherRepo
         run: |
-          THISREPO_LIB_PATH=find $PWD -type d -iname "lib" | head -n 1)
+          THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
           ORIGINREPO_LIB_PATH=$(find $TEMP_PATH -type d -iname "lib" | head -n 1)
           
           echo "Found THIS repo lib location: " find $PWD -type d -iname "lib" | head -n 1)
