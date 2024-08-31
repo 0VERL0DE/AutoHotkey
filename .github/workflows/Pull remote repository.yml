@@ -44,7 +44,7 @@ jobs:
 
       - name: get this repo root
         run: |
-          THISREPO_ROOT_ABSPATH="$PWD"
+          THISREPO_ROOT_ABSPATH="$PWD" >> $GITHUB_ENV
 
 
       - name: Checkout source with token and branch
