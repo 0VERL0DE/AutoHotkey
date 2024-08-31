@@ -1,6 +1,6 @@
 name: Pull Files from Another Repository on Push
 env:
-  SOURCE_REPO: lwcorp/lwsmtp-server
+  SOURCE_REPO: Descolada/AHK-v2-libraries  #lwcorp/lwsmtp-server
   AUTOMATIC_MONITOR: true
   FILES: "*.au3 LICENSE" # separate multiple entries with ,
   FILES_NEW: "*.au3 LICENSE*" # separate multiple entries with ,
@@ -83,7 +83,7 @@ jobs:
         run: |
           LIB_PATH=$(find $PATH_SOURCE_CHECKOUT -type d -name "lib" | head -n 1)
           echo "lib-path=$LIB_PATH" >> $GITHUB_ENV
-          echo "lib located in " $LIB_PATH
+          echo "Found lib directory in OtherRepo at: $LIB_PATH"
 
         
       - name: simulate diff
