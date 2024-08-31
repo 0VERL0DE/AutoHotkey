@@ -79,7 +79,8 @@ jobs:
 
       - name: Find origin repo lib path
         run: |
-          ORIGINREPO_LIB_PATH=$(find $TEMP_PATH -type d -iname "lib" | head -n 1)
+          cd $TEMP_PATH
+          ORIGINREPO_LIB_PATH=$(find -type d -iname "lib" | head -n 1)
           echo "Found ORIGIN repo lib location: $ORIGINREPO_LIB_PATH"
 
           
