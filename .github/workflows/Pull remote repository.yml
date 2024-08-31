@@ -99,7 +99,7 @@ jobs:
         run: |
           echo "current pwd: " $PWD
           echo "current dir: " .
-          git diff -r --name-only  --quiet --no-index .  $LIB_PATH 
+          git diff -r --name-only  --quiet --no-index $PWD $LIB_PATH 
 
           
       - name: Check for changes
