@@ -42,10 +42,14 @@ jobs:
       - name: Find THISREPO lib path
         run: |
           THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
-          echo "Found THIS repo lib location: $THISREPO_LIB_PATH"
-          echo "relative path:"  $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
-          
-        
+          echo "THIS repo lib location: "
+          echo "  ABSPATH: " $THISREPO_LIB_PATH"
+          echo "  RELPATH: " $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
+          echo "TEMP repo lib location: "
+          echo "  ABSPATH: " $PWD$TEMP_PATH$$(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
+          echo "  RELPATH: " $TEMP_PATH$(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
+
+  
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
         uses: actions/checkout@v3
