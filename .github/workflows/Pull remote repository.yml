@@ -122,7 +122,7 @@ jobs:
 
       - name: Copy
         run: |
-          rsync -av --update --exclude='.git' --exclude='.*' "$LIB_PATH/" myrepo/lib/
+          rsync -av --update --exclude='.git' --exclude='.*' "$ABSOLUTE_LIB_PATH" "$ABSOLUTE_PWD"
           echo "sync completed!"
 
         
