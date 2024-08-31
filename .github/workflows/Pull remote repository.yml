@@ -43,11 +43,11 @@ jobs:
         run: |
           THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
           echo "THIS repo lib location: "
-          echo "  ABSPATH: " $THISREPO_LIB_PATH
-          echo "  RELPATH: " $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
+          echo "  ABSPATH: $THISREPO_LIB_PATH"
+          echo "  RELPATH: $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")"
           echo "TEMP repo lib location: "
-          echo "  ABSPATH: " $PWD$TEMP_PATH$(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
-          echo "  RELPATH: " $TEMP_PATH$(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")
+          echo "  ABSPATH: $PWD$TEMP_PATH$(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")"
+          echo "  RELPATH: $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")"
 
   
       - name: Checkout source with token and branch
