@@ -13,8 +13,10 @@ env:
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
   TEMP_PATH: temp_folder
-  ORIGINREPO_LIB_PATH: ''  
-  THISREPO_LIB_PATH: ''   
+  THISREPO_LIB_ABSPATH: ''
+  THISREPO_LIB_RELPATH: ''
+  TEMPREPO_LIB_RELPATH: ''
+  TEMPREPO_LIB_ABSPATH: ''
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -39,17 +41,13 @@ jobs:
         if: env.exiting1 != 'true'
         uses: actions/checkout@v3
 
-      - name: Find THISREPO lib path
+      - name: Get paths to lib dir
         run: |
-          THISREPO_LIB_PATH=$(find $PWD -type d -iname "lib" | head -n 1)
-          echo "THIS repo lib location: "
-          echo "  ABSPATH: $THISREPO_LIB_PATH"
-          echo "  RELPATH: $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")"
-          echo "TEMP repo lib location: "
-          echo "  ABSPATH: $PWD$TEMP_PATH$(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")"
-          echo "  RELPATH: $(realpath --relative-to="$PWD" "$THISREPO_LIB_PATH")"
+          THISREPO_LIB_ABSPATH=$(find $PWD -type d -iname "lib" | head -n 1)
+          THISREPO_LIB_RELPATH=$(realpath --relative-to="$PWD" "$THISREPO_LIB_ABSPATH")"
+          TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH
+          TEMPREPO_LIB_ABSPATH=$PWD/$TEMP_PATH/$(realpath --relative-to="$PWD" "$TEMPREPO_LIB_RELPATH")"
 
-  
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
         uses: actions/checkout@v3
@@ -83,16 +81,6 @@ jobs:
           path: ${{ env.TEMP_PATH }}
 
 
-      - name: Find origin repo lib path
-        run: |
-          cd $TEMP_PATH
-          ORIGINREPO_LIB_PATH=$(find -type d -iname "lib" | head -n 1)
-          echo "Found ORIGIN repo lib location: $ORIGINREPO_LIB_PATH"
-
-          
-      # echo "lib-path=$ORIGINREPO_LIB_PATH" >> $GITHUB_ENV
-
-      
       - name: Update
         if: env.exiting1 != 'true'
         run: |
