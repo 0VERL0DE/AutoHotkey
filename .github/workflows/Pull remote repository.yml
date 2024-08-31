@@ -77,6 +77,15 @@ jobs:
           cp -u $FILES_NEW ../
           cd ..
 
+
+      - name: Find lib directory in OtherRepo
+        id: find-lib
+        run: |
+          LIB_PATH=$(find $PATH_SOURCE_CHECKOUT -type d -name "lib" | head -n 1)
+          echo "lib-path=$LIB_PATH" >> $GITHUB_ENV
+          echo "lib located in " $lib-path
+
+        
       - name: simulate diff
         run: |
           ls -Alt
