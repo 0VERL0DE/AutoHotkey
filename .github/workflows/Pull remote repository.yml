@@ -83,7 +83,7 @@ jobs:
         run: |
           LIB_PATH=$(find $PATH_SOURCE_CHECKOUT -type d -name "lib" | head -n 1)
           echo "lib-path=$LIB_PATH" >> $GITHUB_ENV
-          echo "lib located in " $lib-path
+          echo "lib located in " $LIB_PATH
 
         
       - name: simulate diff
