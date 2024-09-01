@@ -116,26 +116,19 @@ jobs:
           echo "  RELPATH: $THISREPO_LIB_RELPATH"       
 
         
-      - name: simulate diff
+      - name: Simulate diff
         run: |
 
           echo "This repo lib contents: " $THISREPO_LIB_ABSPATH
           ls -Alt $THISREPO_LIB_ABSPATH          
           
           echo "Temp repo lib contents: " $TEMPREPO_LIB_ABSPATH"          
-          ls -Alt $TEMPREPO_LIB_ABSPATH"
+          ls -Alt $TEMPREPO_LIB_ABSPATH
 
       - name: Test Diff
         run: |
-          
-          ABSOLUTE_PWD=$(pwd)
-          if [[ "$ORIGINREPO_LIB_PATH" = /* ]]; then
-            ORIGINREPO_ORIGINREPO_LIB_PATH="$ORIGINREPO_LIB_PATH"
-          else
-            ORIGINREPO_ORIGINREPO_LIB_PATH="$ABSOLUTE_PWD/$ORIGINREPO_LIB_PATH"
-          fi
 
-          git diff --name-only --quiet --no-index $ABSOLUTE_PWD $ORIGINREPO_LIB_PATH
+          git diff --name-only --quiet --no-index $THISREPO_LIB_ABSPATH $TEMPREPO_LIB_ABSPATH
           
       - name: Check for changes
         if: env.exiting1 != 'true'
