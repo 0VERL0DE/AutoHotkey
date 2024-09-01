@@ -99,14 +99,13 @@ jobs:
           echo "TEMPREPO_ROOT_ABSPATH=$TEMPREPO_ROOT_ABSPATH" >> $GITHUB_ENV
 
             
-          TEMPREPO_LIB_RELPATH=$(find "$TEMPREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)"      
+          TEMPREPO_LIB_RELPATH=$(find "$TEMPREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)
           echo "TEMPREPO_LIB_RELPATH=$TEMPREPO_LIB_RELPATH" >> $GITHUB_ENV
 
           TEMPREPO_LIB_ABSPATH=$(realpath "$TEMPREPO_ROOT_ABSPATH/$TEMPREPO_LIB_RELPATH")
-          echo "TEMPREPO_LIB_ABSPATH=$TEMPREPO_LIB_ABSPATH" >> GITHUB_ENV
+          echo "TEMPREPO_LIB_ABSPATH=$TEMPREPO_LIB_ABSPATH" >> $GITHUB_ENV
 
-
-          THISREPO_LIB_RELPATH=$(find $PWD -type d -iname "lib" | head -n 1)"
+          THISREPO_LIB_RELPATH=$(find $THISREPO_ROOT_ABSPATH -type d -iname "lib" | head -n 1)
           echo "THISREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH" >> $GITHUB_ENV
 
           THISREPO_LIB_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$THISREPO_LIB_RELPATH")
