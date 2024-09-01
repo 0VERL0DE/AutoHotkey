@@ -83,8 +83,8 @@ jobs:
         run: |
           cd $TEMP_PATH
           
-          echo "temp root RELPATH: " $TEMP_PATH
-          echo "test full path: " =$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")
+          echo "TEMP_ROOT_RELPATH= $TEMP_PATH" >> $GITHUB_ENV
+          echo 'TEMP_ROOT_ABSPATH= $(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")' >> $GITHUB_ENV
 
 
 
