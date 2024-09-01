@@ -1,4 +1,4 @@
-name: Pull Files from Another Repository on Push
+name: Pull multiple repos
 
 on:
   workflow_dispatch: # Manual trigger
@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
 
 env:
-  ORIGINREPOS: "Descolada/AHK-v2-libraries,Descolada/Acc-v2,Descolada/UIA-v2,Descolada/OCR,Descolada/UIAutomation"  # List of repositories to pull from
+  ORIGINREPOS: "Descolada/AHK-v2-libraries,Descolada/Acc-v2,Descolada/UIA-v2,Descolada/OCR,Descolada/UIAutomation,hyaray/ahk_v2_lib"  # List of repositories to pull from
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
   ADDRESS_SUFFIX: users.noreply.github.com
