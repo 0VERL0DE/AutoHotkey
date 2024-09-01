@@ -97,19 +97,18 @@ jobs:
           
           TEMPREPO_ROOT_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")
           echo "TEMPREPO_ROOT_ABSPATH=$TEMPREPO_ROOT_ABSPATH" >> $GITHUB_ENV
-
-            
-          TEMPREPO_LIB_RELPATH=$(find "$TEMPREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)
-          echo "TEMPREPO_LIB_RELPATH=$TEMPREPO_LIB_RELPATH" >> $GITHUB_ENV
-
-          TEMPREPO_LIB_ABSPATH=$(realpath "$TEMPREPO_ROOT_ABSPATH/$TEMPREPO_LIB_RELPATH")
+          
+          TEMPREPO_LIB_ABSPATH=$(find "$TEMPREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)
           echo "TEMPREPO_LIB_ABSPATH=$TEMPREPO_LIB_ABSPATH" >> $GITHUB_ENV
-
-          THISREPO_LIB_RELPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)
-          echo "THISREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH" >> $GITHUB_ENV
-
-          THISREPO_LIB_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$TEMPREPO_LIB_RELPATH")
+          
+          TEMPREPO_LIB_RELPATH=$(realpath --relative-to="$TEMPREPO_ROOT_ABSPATH" "$TEMPREPO_LIB_ABSPATH")
+          echo "TEMPREPO_LIB_RELPATH=$TEMPREPO_LIB_RELPATH" >> $GITHUB_ENV
+          
+          THISREPO_LIB_ABSPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)
           echo "THISREPO_LIB_ABSPATH=$THISREPO_LIB_ABSPATH" >> $GITHUB_ENV
+          
+          THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")
+          echo "THISREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH" >> $GITHUB_ENV
 
 
           echo "TEMP repo lib location:"
