@@ -144,7 +144,7 @@ jobs:
 
       - name: Copy
         run: |
-          rsync -av --update --exclude='.git' --exclude='.*' "$TEMPREPO_LIB_ABSPATH" "$THISREPO_LIB_ABSPATH"
+          rsync -av --update --exclude='.git' --exclude='.*' "$TEMPREPO_LIB_ABSPATH/" "$THISREPO_LIB_ABSPATH"
           echo "sync completed!"
 
                 
