@@ -84,7 +84,7 @@ jobs:
           cd $TEMP_PATH
           
           echo "temp root RELPATH: " $TEMP_PATH
-          echo "temp root ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" .)
+          echo "temp root ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" /)
           
           $EXTRA
           rsync -av --exclude='.git' --exclude='.*' . ../
