@@ -13,11 +13,7 @@ env:
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
   TEMP_PATH: temp_folder
- # THISREPO_LIB_ABSPATH: ''
- # THISREPO_LIB_RELPATH: ''
- # TEMPREPO_LIB_RELPATH: ''
- # TEMPREPO_LIB_ABSPATH: ''
- # THISREPO_ROOT_ABSPATH: ''
+
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -122,11 +118,12 @@ jobs:
         
       - name: simulate diff
         run: |
-          ls -Alt
-          echo "current dir: " $PWD 
-          echo "folder 1: " $PWD
-          echo "folder 2: " $PWD/temp_folder
-          ls -Alt $PWD/temp_folder
+
+          echo "This repo lib contents: " $THISREPO_LIB_ABSPATH
+          ls -Alt $THISREPO_LIB_ABSPATH          
+          
+          echo "Temp repo lib contents: " $TEMPREPO_LIB_ABSPATH"          
+          ls -Alt $TEMPREPO_LIB_ABSPATH"
 
       - name: Test Diff
         run: |
