@@ -13,11 +13,11 @@ env:
   # TARGET_PATH: target_alternate_path # uncomment to monitor a non default target branch
   THE_SERVER: ${{ github.server_url }}
   TEMP_PATH: temp_folder
-  THISREPO_LIB_ABSPATH: ''
-  THISREPO_LIB_RELPATH: ''
-  TEMPREPO_LIB_RELPATH: ''
-  TEMPREPO_LIB_ABSPATH: ''
-  THISREPO_ROOT_ABSPATH: ''
+ # THISREPO_LIB_ABSPATH: ''
+ # THISREPO_LIB_RELPATH: ''
+ # TEMPREPO_LIB_RELPATH: ''
+ # TEMPREPO_LIB_ABSPATH: ''
+ # THISREPO_ROOT_ABSPATH: ''
   THE_SECRET: ${{ secrets.TOKEN_NAME || 'default_value' }}
 
 on: # Remove # below for non default branches
@@ -44,8 +44,7 @@ jobs:
 
       - name: get this repo root
         run: |
-          THISREPO_ROOT_ABSPATH="$PWD" >> $GITHUB_ENV
-
+          echo "THISREPO_ROOT_ABSPATH=$PWD">> $GITHUB_ENV
 
       - name: Checkout source with token and branch
         if: env.exiting1 != 'true' && env.THE_SECRET != 'default_value' && env.SOURCE_BRANCH
