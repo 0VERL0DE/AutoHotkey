@@ -82,6 +82,10 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $TEMP_PATH
+          
+          echo "temp root RELPATH: " $TEMP_PATH
+          echo "temp root ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMP_PATH")
+          
           $EXTRA
           rsync -av --exclude='.git' --exclude='.*' . ../
           cd ..
@@ -90,9 +94,6 @@ jobs:
 
       - name: Get paths to lib dir
         run: |
-          echo "temp root RELPATH: " $TEMP_PATH
-          echo "temp root ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMP_PATH")"
-
 
           echo "TEMPREPO_LIB_RELPATH=$(find "$TEMP_PATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
           
