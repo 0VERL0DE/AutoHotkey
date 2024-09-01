@@ -134,14 +134,14 @@ jobs:
             echo "exiting2=true" >> $GITHUB_ENV
           else
             echo "changes detected!"
-            echo "copying content from " $ORIGINREPO_LIB_PATH " to " $ABSOLUTE_PWD
+            echo "copying content from " $TEMPREPO_LIB_ABSPATH " to " $THISREPO_LIB_ABSPATH
           fi
           
       #git commit -m "Pulled files from $THE_SERVER/$ORIGINREPO."
 
       - name: Copy
         run: |
-          rsync -av --update --exclude='.git' --exclude='.*' "$ORIGINREPO_LIB_PATH" "$ABSOLUTE_PWD"
+          rsync -av --update --exclude='.git' --exclude='.*' "$TEMPREPO_LIB_ABSPATH" "$THISREPO_LIB_ABSPATH"
           echo "sync completed!"
 
         
