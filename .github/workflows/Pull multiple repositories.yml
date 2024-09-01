@@ -6,7 +6,7 @@ on:
     - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
 
 env:
-  ORIGINREPOS: "Descolada/AHK-v2-libraries,Descolada/Acc-v2"  # List of repositories to pull from
+  ORIGINREPOS: "Descolada/AHK-v2-libraries,Descolada/Acc-v2,Descolada/UIA-v2,Descolada/OCR,Descolada/UIAutomation"  # List of repositories to pull from
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
   ADDRESS_SUFFIX: users.noreply.github.com
