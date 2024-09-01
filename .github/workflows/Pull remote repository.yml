@@ -83,7 +83,9 @@ jobs:
         run: |
           cd $TEMP_PATH
 
-          echo "TEMP_ROOT_RELPATH=$TEMP_PATH" >> $GITHUB_ENV
+          TEMP_ROOT_RELPATH=$TEMP_PATH
+          echo "TEMP_ROOT_RELPATH=$TEMP_ROOT_RELPATH" >> $GITHUB_ENV
+          
           TEMP_ROOT_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")
           echo "TEMP_ROOT_ABSPATH=$TEMP_ROOT_ABSPATH" >> $GITHUB_ENV
           
