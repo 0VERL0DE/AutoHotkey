@@ -1,0 +1,78 @@
+name: Pull Files from Another Repository on Push
+
+on:
+  workflow_dispatch: # Manual trigger
+  schedule:          # Scheduled trigger
+    - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
+
+env:
+  ORIGINREPOS: "Descolada/AHK-v2-libraries,Descolada/Acc-v2"  # List of repositories to pull from
+  AUTOMATIC_MONITOR: true
+  USERNAME: ${{ github.actor }}
+  ADDRESS_SUFFIX: users.noreply.github.com
+  TOKEN_NAME: ACCESS_TOKEN # Name of token defined in the target repo's settings
+  THE_SERVER: ${{ github.server_url }}
+  TEMP_PATH: temp_folder
+
+jobs:
+  pull-file:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Ensure the GITHUB_TOKEN has write access to the repository
+    
+    steps:
+      - name: Check whether to automatically monitor
+        if: ${{ github.event_name != 'workflow_dispatch' && env.AUTOMATIC_MONITOR == 'false' }}
+        run: |
+          echo "Set not to run automatically. Exiting."
+          echo "exiting1=true" >> $GITHUB_ENV
+
+      - name: Checkout this repo
+        if: env.exiting1 != 'true'
+        uses: actions/checkout@v3
+
+      - name: Get this repo root
+        if: env.exiting1 != 'true'
+        run: |
+          echo "THISREPO_ROOT_ABSPATH=$PWD" >> $GITHUB_ENV
+
+      - name: Pull from external repos
+        if: env.exiting1 != 'true'
+        run: |
+          IFS=',' read -ra REPOS <<< "${{ env.ORIGINREPOS }}"
+          for REPO in "${REPOS[@]}"; do
+            echo "Processing repository: $REPO"
+            
+            TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
+            
+            # Checkout the repository
+            git clone https://github.com/$REPO.git $TEMP_REPO_PATH
+            
+            # Find the 'lib' directory in the cloned repo
+            TEMP_LIB_ABSPATH=$(find "$TEMP_REPO_PATH" -type d -iname "lib" | head -n 1)
+            
+            if [ -z "$TEMP_LIB_ABSPATH" ]; then
+              echo "No 'lib' directory found in $REPO"
+              continue
+            fi
+            
+            # Sync the 'lib' directory contents into the main repository's lib directory
+            rsync -av --update --exclude='.git' --exclude='.*' "$TEMP_LIB_ABSPATH/" "$THISREPO_ROOT_ABSPATH/lib/"
+            
+            # Clean up
+            rm -rf "$TEMP_REPO_PATH"
+          done
+
+      - name: Commit and Push Changes
+        if: env.exiting1 != 'true'
+        run: |
+          cd $THISREPO_ROOT_ABSPATH
+          git config user.name "$USERNAME"
+          git config user.email "$USERNAME@$ADDRESS_SUFFIX"
+          git add lib
+          git commit -m "Pulled files from external repositories"
+          if [ -n "$TARGET_BRANCH" ]; then
+            git push origin "$TARGET_BRANCH"
+          else
+            git push
+          fi
