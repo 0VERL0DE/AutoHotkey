@@ -84,6 +84,10 @@ jobs:
           cd $TEMP_PATH
           
           echo "temp root RELPATH: " $TEMP_PATH
+          echo "test full path: " =$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")
+
+
+
           echo "temp root ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" /)
           
           $EXTRA
@@ -96,8 +100,7 @@ jobs:
         run: |
 
           echo "TEMPREPO_LIB_RELPATH=$(find "$TEMP_PATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
-          
-          echo "TEMPREPO_LIB_ABSPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMPREPO_LIB_RELPATH")"  >> $GITHUB_ENV
+          echo "TEMPREPO_LIB_ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMPREPO_LIB_RELPATH")
 
 
              # Output the results
