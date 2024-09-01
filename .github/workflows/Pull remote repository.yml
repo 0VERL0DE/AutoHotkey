@@ -122,7 +122,7 @@ jobs:
           echo "This repo lib contents: " $THISREPO_LIB_ABSPATH
           ls -Alt $THISREPO_LIB_ABSPATH          
           
-          echo "Temp repo lib contents: " $TEMPREPO_LIB_ABSPATH"          
+          echo "Temp repo lib contents: " $TEMPREPO_LIB_ABSPATH         
           ls -Alt $TEMPREPO_LIB_ABSPATH
 
       - name: Test Diff
