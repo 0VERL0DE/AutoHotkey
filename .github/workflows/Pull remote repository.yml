@@ -82,16 +82,7 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           cd $TEMP_PATH
-
-          TEMP_ROOT_RELPATH=$TEMP_PATH
-          echo "TEMP_ROOT_RELPATH=$TEMP_ROOT_RELPATH" >> $GITHUB_ENV
           
-          TEMP_ROOT_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")
-          echo "TEMP_ROOT_ABSPATH=$TEMP_ROOT_ABSPATH" >> $GITHUB_ENV
-          
-          echo "temp root ABSPATH: $TEMP_ROOT_ABSPATH"
-          echo "temp root RELPATH: $TEMP_ROOT_RELPATH"
-
           $EXTRA
           rsync -av --exclude='.git' --exclude='.*' . ../
           cd ..
@@ -101,13 +92,27 @@ jobs:
       - name: Get paths to lib dir
         run: |
 
-          echo "TEMPREPO_LIB_RELPATH=$(find "$TEMP_PATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
-          echo "TEMPREPO_LIB_ABSPATH: " $(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMPREPO_LIB_RELPATH")
-
-
-             # Output the results
-
+          TEMPREPO_ROOT_RELPATH=$TEMP_PATH
+          echo "TEMPREPO_ROOT_RELPATH=$TEMPREPO_ROOT_RELPATH" >> $GITHUB_ENV
           
+          TEMPREPO_ROOT_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")
+          echo "TEMPREPO_ROOT_ABSPATH=$TEMPREPO_ROOT_ABSPATH" >> $GITHUB_ENV
+
+            
+          TEMPREPO_LIB_RELPATH=$(find "$TEMPREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)"      
+          echo "TEMPREPO_LIB_RELPATH=$TEMPREPO_LIB_RELPATH" >> $GITHUB_ENV
+
+          TEMPREPO_LIB_ABSPATH=$(realpath "$TEMPREPO_ROOT_ABSPATH/$TEMPREPO_LIB_RELPATH")
+          echo "TEMPREPO_LIB_ABSPATH=$TEMPREPO_LIB_ABSPATH" >> GITHUB_ENV
+
+
+          THISREPO_LIB_RELPATH=$(find $PWD -type d -iname "lib" | head -n 1)"
+          echo "THISREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH" >> $GITHUB_ENV
+
+          THISREPO_LIB_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$THISREPO_LIB_RELPATH")
+          echo "THISREPO_LIB_ABSPATH=$THISREPO_LIB_ABSPATH" >> $GITHUB_ENV
+
+
           echo "TEMP repo lib location:"
           echo "  ABSPATH: $TEMPREPO_LIB_ABSPATH"
           echo "  RELPATH: $TEMPREPO_LIB_RELPATH"
@@ -115,12 +120,6 @@ jobs:
           echo "THIS repo lib location:"
           echo "  ABSPATH: $THISREPO_LIB_ABSPATH"
           echo "  RELPATH: $THISREPO_LIB_RELPATH"       
-      # echo "THISREPO_LIB_ABSPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
-      # echo "THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"  >> $GITHUB_ENV
-        #  echo "TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH"  >> $GITHUB_ENV
-        #  echo "TEMPREPO_LIB_ABSPATH="$THISREPO_ROOT_ABSPATH/$TEMP_PATH/$TEMPREPO_LIB_RELPATH"  >> $GITHUB_ENV
-
-
 
         
       - name: simulate diff
