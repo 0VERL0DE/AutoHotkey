@@ -84,10 +84,11 @@ jobs:
           cd $TEMP_PATH
 
           echo "TEMP_ROOT_RELPATH=$TEMP_PATH" >> $GITHUB_ENV
-          echo "TEMP_ROOT_ABSPATH    $(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")"  >> $GITHUB_ENV
+          echo "TEMP_ROOT_ABSPATH=$(realpath "$THISREPO_ROOT_ABSPATH/$TEMP_PATH")"  >> $GITHUB_ENV
 
 
           echo "temp root ABSPATH: " $TEMP_ROOT_ABSPATH
+          echo "temp root RELPATH: " $TEMP_ROOT_RELPATH
           
           $EXTRA
           rsync -av --exclude='.git' --exclude='.*' . ../
