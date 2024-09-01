@@ -90,6 +90,8 @@ jobs:
 
       - name: Get paths to lib dir
         run: |
+          echo "current dir: " $PWD
+          echo ls -Alt
           echo "THISREPO_LIB_ABSPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
           echo "THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"  >> $GITHUB_ENV
           echo "TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH"  >> $GITHUB_ENV
