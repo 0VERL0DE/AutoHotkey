@@ -92,19 +92,25 @@ jobs:
         run: |
           echo "current dir: " $PWD
           echo ls -Alt
-          echo "THISREPO_LIB_ABSPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
-          echo "THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"  >> $GITHUB_ENV
-          echo "TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH"  >> $GITHUB_ENV
-          echo "TEMPREPO_LIB_ABSPATH="$THISREPO_ROOT_ABSPATH/$TEMP_PATH/$TEMPREPO_LIB_RELPATH"  >> $GITHUB_ENV
+          echo "TEMPREPO_LIB_RELPATH=$(find "$TEMP_PATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
+          echo "TEMPREPO_LIB_ABSPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$TEMPREPO_LIB_RELPATH")"  >> $GITHUB_ENV
+
 
              # Output the results
-          echo "THIS repo lib location:"
-          echo "  ABSPATH: $THISREPO_LIB_ABSPATH"
-          echo "  RELPATH: $THISREPO_LIB_RELPATH"
+
           
           echo "TEMP repo lib location:"
           echo "  ABSPATH: $TEMPREPO_LIB_ABSPATH"
           echo "  RELPATH: $TEMPREPO_LIB_RELPATH"
+
+          echo "THIS repo lib location:"
+          echo "  ABSPATH: $THISREPO_LIB_ABSPATH"
+          echo "  RELPATH: $THISREPO_LIB_RELPATH"       
+      # echo "THISREPO_LIB_ABSPATH=$(find "$THISREPO_ROOT_ABSPATH" -type d -iname "lib" | head -n 1)"  >> $GITHUB_ENV
+      # echo "THISREPO_LIB_RELPATH=$(realpath --relative-to="$THISREPO_ROOT_ABSPATH" "$THISREPO_LIB_ABSPATH")"  >> $GITHUB_ENV
+        #  echo "TEMPREPO_LIB_RELPATH=$THISREPO_LIB_RELPATH"  >> $GITHUB_ENV
+        #  echo "TEMPREPO_LIB_ABSPATH="$THISREPO_ROOT_ABSPATH/$TEMP_PATH/$TEMPREPO_LIB_RELPATH"  >> $GITHUB_ENV
+
 
 
         
