@@ -82,12 +82,17 @@ jobs:
             
             # Ensure the directory for the local file exists
             mkdir -p "$(dirname "$LOCAL_FILE_ABSPATH")"
-            
-            # Copy the file from the remote repository to the local file path
-            cp "$TEMP_REMOTE_FILE_ABSPATH" "$LOCAL_FILE_ABSPATH"
-            
-            # Prepare commit message
-            COMMIT_MSG+="Pulled $REMOTE_FILE_PATH from $REPO into $LOCAL_FILE_PATH.\n"
+
+            # Check if the local file is identical to the remote file
+            if [ -f "$LOCAL_FILE_ABSPATH" ] && cmp -s "$TEMP_REMOTE_FILE_ABSPATH" "$LOCAL_FILE_ABSPATH"; then
+              echo "The file $LOCAL_FILE_PATH is identical to $REMOTE_FILE_PATH in $REPO. Skipping."
+            else
+              # Copy the file from the remote repository to the local file path
+              cp "$TEMP_REMOTE_FILE_ABSPATH" "$LOCAL_FILE_ABSPATH"
+              # Prepare commit message
+              COMMIT_MSG+="Pulled $REMOTE_FILE_PATH from $REPO into $LOCAL_FILE_PATH.\n"
+            fi
+
             
             # Clean up
             rm -rf "$TEMP_REPO_PATH"
