@@ -1,0 +1,111 @@
+name: Pull individual files from multiple repos
+
+on:
+  workflow_dispatch: # Manual trigger
+  schedule:          # Scheduled trigger
+    - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
+
+env:
+  # Multi-line format for file sync pairs: "local_file_path|repo|remote_file_path"
+  ORIGINFILES: |
+    UIATreeInspector.ahk|Descolada/UIA-v2|UIATreeInspector.ahk
+    WindowSpy.ahk|nperovic/Dark_WindowSpy|WindowSpy.ahk
+    SelectFile.ahk|nperovic/SelectFile|SelectFile.ahk
+
+  AUTOMATIC_MONITOR: true
+  USERNAME: ${{ github.actor }}
+  ADDRESS_SUFFIX: users.noreply.github.com
+  TOKEN_NAME: ACCESS_TOKEN # Name of token defined in the target repo's settings
+  THE_SERVER: ${{ github.server_url }}
+  TEMP_PATH: temp_folder
+
+jobs:
+  pull-file:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Ensure the GITHUB_TOKEN has write access to the repository
+    
+    steps:
+      - name: Check whether to automatically monitor
+        if: ${{ github.event_name != 'workflow_dispatch' && env.AUTOMATIC_MONITOR == 'false' }}
+        run: |
+          echo "Set not to run automatically. Exiting."
+          echo "exiting1=true" >> $GITHUB_ENV
+
+      - name: Checkout this repo
+        if: env.exiting1 != 'true'
+        uses: actions/checkout@v3
+
+      - name: Get this repo root
+        if: env.exiting1 != 'true'
+        run: |
+          echo "THISREPO_ROOT_ABSPATH=$PWD" >> $GITHUB_ENV
+
+      - name: Pull individual files from external repos
+        if: env.exiting1 != 'true'
+        run: |
+          COMMIT_MSG=""
+
+          while IFS= read -r FILE_ENTRY || [ -n "$FILE_ENTRY" ]; do
+            FILE_ENTRY=$(echo "$FILE_ENTRY" | xargs) # Trim leading/trailing whitespace
+            [ -z "$FILE_ENTRY" ] && continue # Skip empty lines
+            LOCAL_FILE_PATH="${FILE_ENTRY%%|*}"
+            REPO_WITH_REMOTE_FILE="${FILE_ENTRY#*|}"
+            REPO="${REPO_WITH_REMOTE_FILE%%|*}"
+            REMOTE_FILE_PATH="${REPO_WITH_REMOTE_FILE##*|}"
+
+            echo "Processing repository: $REPO"
+            echo "Local file path: $LOCAL_FILE_PATH"
+            echo "Remote file path: $REMOTE_FILE_PATH"
+            
+            TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
+            LOCAL_FILE_ABSPATH="$THISREPO_ROOT_ABSPATH/$LOCAL_FILE_PATH"
+            
+            # Checkout the repository
+            git clone --depth 1 https://github.com/$REPO.git $TEMP_REPO_PATH
+            
+            # Remove the .git directory to prevent embedding
+            rm -rf "$TEMP_REPO_PATH/.git"
+            
+            # Determine the absolute path of the remote file
+            TEMP_REMOTE_FILE_ABSPATH="$TEMP_REPO_PATH/$REMOTE_FILE_PATH"
+            
+            if [ ! -f "$TEMP_REMOTE_FILE_ABSPATH" ]; then
+              echo "No '$REMOTE_FILE_PATH' file found in $REPO"
+              continue
+            fi
+            
+            # Ensure the directory for the local file exists
+            mkdir -p "$(dirname "$LOCAL_FILE_ABSPATH")"
+            
+            # Copy the file from the remote repository to the local file path
+            cp "$TEMP_REMOTE_FILE_ABSPATH" "$LOCAL_FILE_ABSPATH"
+            
+            # Prepare commit message
+            COMMIT_MSG+="Pulled $REMOTE_FILE_PATH from $REPO into $LOCAL_FILE_PATH.\n"
+            
+            # Clean up
+            rm -rf "$TEMP_REPO_PATH"
+          done <<< "${{ env.ORIGINFILES }}"
+
+          # Check if any files were actually added to commit
+          if [ -n "$COMMIT_MSG" ]; then
+            echo "Commit message: $COMMIT_MSG"
+            echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
+          else
+            echo "No changes to commit."
+            echo "exiting1=true" >> $GITHUB_ENV
+          fi
+
+      - name: Commit and Push Changes
+        if: env.exiting1 != 'true'
+        run: |
+          cd $THISREPO_ROOT_ABSPATH
+          git config user.name "$USERNAME"
+          git config user.email "$USERNAME@$ADDRESS_SUFFIX"
+          git add .
+          git commit -m "${COMMIT_MSG}"
+          if [ -n "$TARGET_BRANCH" ]; then
+            git push origin "$TARGET_BRANCH"
+          else
+            git push
