@@ -62,15 +62,13 @@ jobs:
             TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
             TARGET_DIR_PATH="$THISREPO_ROOT_ABSPATH/$TARGET_DIR"
             
-            # Clone the repository without .git directory
-            git clone --depth 1 --filter=blob:none --sparse https://github.com/$REPO.git $TEMP_REPO_PATH
+            # Checkout the repository
+            git clone --depth 1 https://github.com/$REPO.git $TEMP_REPO_PATH
             
-            # Ensure only the specific directory is checked out
-            cd $TEMP_REPO_PATH
-            git sparse-checkout init --cone
-            git sparse-checkout set $SRC_DIR
+            # Remove the .git directory to prevent embedding
+            rm -rf "$TEMP_REPO_PATH/.git"
             
-            # Rsync from the specified source directory, excluding .git and hidden files
+            # Determine the absolute path of the source directory
             TEMP_SRC_ABSPATH="$TEMP_REPO_PATH/$SRC_DIR"
             
             if [ ! -d "$TEMP_SRC_ABSPATH" ]; then
@@ -88,7 +86,6 @@ jobs:
             COMMIT_MSG+="Pulled files from $REPO/$SRC_DIR into $TARGET_DIR.\n"
             
             # Clean up
-            cd $THISREPO_ROOT_ABSPATH
             rm -rf "$TEMP_REPO_PATH"
           done <<< "${{ env.ORIGINREPOS }}"
 
