@@ -1,4 +1,4 @@
-name: Pull multiple repos with custom target directories
+name: Pull repos and reorganize
 
 on:
   workflow_dispatch: # Manual trigger
@@ -114,3 +114,4 @@ jobs:
             git push origin "$TARGET_BRANCH"
           else
             git push
+          fi
