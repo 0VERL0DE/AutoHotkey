@@ -82,7 +82,7 @@ jobs:
             mkdir -p "$TARGET_DIR_PATH"
             
             # Sync the specified directory contents into the specified target directory
-            rsync -av --update --exclude='.git' --exclude='.*' "$TEMP_SRC_ABSPATH/" "$TARGET_DIR_PATH/"
+            rsync -av --update --exclude='.git' --exclude='.sh' --exclude='.*' "$TEMP_SRC_ABSPATH/" "$TARGET_DIR_PATH/"
             
             # Prepare commit message
             COMMIT_MSG+="Pulled files from $REPO/$SRC_DIR into $TARGET_DIR.\n"
