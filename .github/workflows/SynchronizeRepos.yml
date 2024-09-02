@@ -1,4 +1,4 @@
-name: Pull repos with custom locations
+name: Pull multiple repos with custom target directories
 
 on:
   workflow_dispatch: # Manual trigger
@@ -62,10 +62,15 @@ jobs:
             TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
             TARGET_DIR_PATH="$THISREPO_ROOT_ABSPATH/$TARGET_DIR"
             
-            # Checkout the repository
-            git clone https://github.com/$REPO.git $TEMP_REPO_PATH
+            # Clone the repository without .git directory
+            git clone --depth 1 --filter=blob:none --sparse https://github.com/$REPO.git $TEMP_REPO_PATH
             
-            # Find the specified source directory in the cloned repo
+            # Ensure only the specific directory is checked out
+            cd $TEMP_REPO_PATH
+            git sparse-checkout init --cone
+            git sparse-checkout set $SRC_DIR
+            
+            # Rsync from the specified source directory, excluding .git and hidden files
             TEMP_SRC_ABSPATH="$TEMP_REPO_PATH/$SRC_DIR"
             
             if [ ! -d "$TEMP_SRC_ABSPATH" ]; then
@@ -83,6 +88,7 @@ jobs:
             COMMIT_MSG+="Pulled files from $REPO/$SRC_DIR into $TARGET_DIR.\n"
             
             # Clean up
+            cd $THISREPO_ROOT_ABSPATH
             rm -rf "$TEMP_REPO_PATH"
           done <<< "${{ env.ORIGINREPOS }}"
 
