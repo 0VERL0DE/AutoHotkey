@@ -18,7 +18,7 @@ env:
 
 on: # Remove # below for non default branches
   workflow_dispatch:
-  push:
+#  push:
 #    branches:
 #      - ${{ env.TARGET_BRANCH }}
 #    paths:
