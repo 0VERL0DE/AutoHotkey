@@ -70,7 +70,9 @@ jobs:
             
             # Remove the .git directory to prevent embedding
             rm -rf "$TEMP_REPO_PATH/.git"
-            
+            rm README.md
+            rm LICENSE.md
+
             # Determine the absolute path of the remote file
             TEMP_REMOTE_FILE_ABSPATH="$TEMP_REPO_PATH/$REMOTE_FILE_PATH"
             
