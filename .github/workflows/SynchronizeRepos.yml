@@ -9,12 +9,12 @@ env:
   # Multi-line format for repository and directory pairs: "target_dir|repo|src_dir"
   ORIGINREPOS: |
     lib|Descolada/UIAutomation|lib
-    lib|samfisherirl/Github.ahk-API-for-AHKv2/v2|lib
+    lib|samfisherirl/Github.ahk-API-for-AHKv2|v2/lib
     lib|Descolada/AHK-v2-libraries|lib
     inc|Descolada/Acc-v2|inc
     lib|Descolada/UIA-v2|lib
     lib|hyaray/ahk_v2_lib|lib
-    lib|samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely/64bit|lib
+    lib|samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely|64bit/lib
   
 
   AUTOMATIC_MONITOR: true
