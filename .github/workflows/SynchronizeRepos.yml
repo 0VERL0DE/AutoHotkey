@@ -47,9 +47,8 @@ jobs:
       - name: Pull from external repos
         if: env.exiting1 != 'true'
         run: |
-
           COMMIT_MSG=""
-                  
+
           while IFS= read -r REPO_ENTRY || [ -n "$REPO_ENTRY" ]; do
             REPO_ENTRY=$(echo "$REPO_ENTRY" | xargs) # Trim leading/trailing whitespace
             [ -z "$REPO_ENTRY" ] && continue # Skip empty lines
@@ -92,7 +91,6 @@ jobs:
             rm -rf "$TEMP_REPO_PATH"
           done <<< "${{ env.ORIGINREPOS }}"
 
-          
           # Check if any files were actually added to commit
           if [ -n "$COMMIT_MSG" ]; then
             echo "Commit message: $COMMIT_MSG"
@@ -102,7 +100,6 @@ jobs:
             echo "exiting1=true" >> $GITHUB_ENV
           fi
 
-
       - name: Commit and Push Changes
         if: env.exiting1 != 'true'
         run: |
@@ -110,7 +107,7 @@ jobs:
           git config user.name "$USERNAME"
           git config user.email "$USERNAME@$ADDRESS_SUFFIX"
           git add .
-          git commit -m "$COMMIT_MSG"
+          git commit -m "${COMMIT_MSG}"
           if [ -n "$TARGET_BRANCH" ]; then
             git push origin "$TARGET_BRANCH"
           else
