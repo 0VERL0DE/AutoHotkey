@@ -22,8 +22,12 @@ env:
 jobs:
   pull-file:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     permissions:
       contents: write # Ensure the GITHUB_TOKEN has write access to the repository
+
     
     steps:
       - name: Check whether to automatically monitor
