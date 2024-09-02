@@ -8,9 +8,9 @@ on:
 env:
   # Multi-line format for file sync pairs: "local_file_path|repo|remote_file_path"
   ORIGINFILES: |
-    UIATreeInspector.ahk|Descolada/UIA-v2|UIATreeInspector.ahk
     WindowSpy.ahk|nperovic/Dark_WindowSpy|WindowSpy.ahk
     SelectFile.ahk|nperovic/SelectFile|SelectFile.ahk
+  #  UIATreeInspector.ahk|Descolada/UIA-v2|UIATreeInspector.ahk
 
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
