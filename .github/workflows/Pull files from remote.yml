@@ -10,7 +10,7 @@ env:
   ORIGINFILES: |
     WindowSpy.ahk|nperovic/Dark_WindowSpy|WindowSpy.ahk
     SelectFile.ahk|nperovic/SelectFile|SelectFile.ahk
-  #  UIATreeInspector.ahk|Descolada/UIA-v2|UIATreeInspector.ahk
+    UIATreeInspector.ahk|Descolada/UIA-v2|UIATreeInspector.ahk
 
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
@@ -113,3 +113,4 @@ jobs:
             git push origin "$TARGET_BRANCH"
           else
             git push
+          fi
