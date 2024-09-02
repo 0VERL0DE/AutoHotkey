@@ -1,0 +1,100 @@
+name: Pull repos with custom locations
+
+on:
+  workflow_dispatch: # Manual trigger
+  schedule:          # Scheduled trigger
+    - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
+
+env:
+  # Multi-line format for repository and directory pairs: "target_dir|repo|src_dir"
+  ORIGINREPOS: |
+    lib|Descolada/AHK-v2-libraries|lib
+    inc|Descolada/Acc-v2|inc
+    lib|Descolada/UIA-v2|lib
+    src|Descolada/OCR|src
+    lib|Descolada/UIAutomation|lib
+    lib|hyaray/ahk_v2_lib|lib
+
+  AUTOMATIC_MONITOR: true
+  USERNAME: ${{ github.actor }}
+  ADDRESS_SUFFIX: users.noreply.github.com
+  TOKEN_NAME: ACCESS_TOKEN # Name of token defined in the target repo's settings
+  THE_SERVER: ${{ github.server_url }}
+  TEMP_PATH: temp_folder
+
+jobs:
+  pull-file:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Ensure the GITHUB_TOKEN has write access to the repository
+    
+    steps:
+      - name: Check whether to automatically monitor
+        if: ${{ github.event_name != 'workflow_dispatch' && env.AUTOMATIC_MONITOR == 'false' }}
+        run: |
+          echo "Set not to run automatically. Exiting."
+          echo "exiting1=true" >> $GITHUB_ENV
+
+      - name: Checkout this repo
+        if: env.exiting1 != 'true'
+        uses: actions/checkout@v3
+
+      - name: Get this repo root
+        if: env.exiting1 != 'true'
+        run: |
+          echo "THISREPO_ROOT_ABSPATH=$PWD" >> $GITHUB_ENV
+
+      - name: Pull from external repos
+        if: env.exiting1 != 'true'
+        run: |
+          while IFS= read -r REPO_ENTRY || [ -n "$REPO_ENTRY" ]; do
+            REPO_ENTRY=$(echo "$REPO_ENTRY" | xargs) # Trim leading/trailing whitespace
+            [ -z "$REPO_ENTRY" ] && continue # Skip empty lines
+            TARGET_DIR="${REPO_ENTRY%%|*}"
+            REPO_WITH_SRC="${REPO_ENTRY#*|}"
+            REPO="${REPO_WITH_SRC%%|*}"
+            SRC_DIR="${REPO_WITH_SRC##*|}"
+
+            echo "Processing repository: $REPO"
+            echo "Source directory: $SRC_DIR"
+            echo "Target directory: $TARGET_DIR"
+            
+            TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
+            TARGET_DIR_PATH="$THISREPO_ROOT_ABSPATH/$TARGET_DIR"
+            
+            # Checkout the repository
+            git clone https://github.com/$REPO.git $TEMP_REPO_PATH
+            
+            # Find the specified source directory in the cloned repo
+            TEMP_SRC_ABSPATH="$TEMP_REPO_PATH/$SRC_DIR"
+            
+            if [ ! -d "$TEMP_SRC_ABSPATH" ]; then
+              echo "No '$SRC_DIR' directory found in $REPO"
+              continue
+            fi
+            
+            # Ensure the target directory exists
+            mkdir -p "$TARGET_DIR_PATH"
+            
+            # Sync the specified directory contents into the specified target directory
+            rsync -av --update --exclude='.git' --exclude='.*' "$TEMP_SRC_ABSPATH/" "$TARGET_DIR_PATH/"
+            
+            # Prepare commit message
+            COMMIT_MSG+="Pulled files from $REPO/$SRC_DIR into $TARGET_DIR.\n"
+            
+            # Clean up
+            rm -rf "$TEMP_REPO_PATH"
+          done <<< "${{ env.ORIGINREPOS }}"
+
+      - name: Commit and Push Changes
+        if: env.exiting1 != 'true'
+        run: |
+          cd $THISREPO_ROOT_ABSPATH
+          git config user.name "$USERNAME"
+          git config user.email "$USERNAME@$ADDRESS_SUFFIX"
+          git add .
+          git commit -m "$COMMIT_MSG"
+          if [ -n "$TARGET_BRANCH" ]; then
+            git push origin "$TARGET_BRANCH"
+          else
+            git push
