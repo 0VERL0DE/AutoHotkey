@@ -15,7 +15,6 @@ env:
     lib|Descolada/UIA-v2|lib
     lib|hyaray/ahk_v2_lib|lib
     lib|samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely|64bit/lib
-  
 
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
@@ -72,7 +71,6 @@ jobs:
               rm -rf "$TEMP_REPO_PATH"
             fi
 
-
             # Checkout the repository
             git clone --depth 1 https://github.com/$REPO.git $TEMP_REPO_PATH
             
@@ -108,6 +106,12 @@ jobs:
             echo "No changes to commit."
             echo "exiting1=true" >> $GITHUB_ENV
           fi
+
+      - name: Cleanup temp directory
+        if: env.exiting1 != 'true'
+        run: |
+          echo "Cleaning up the temp folder"
+          rm -rf $TEMP_PATH
 
       - name: Commit and Push Changes
         if: env.exiting1 != 'true'
