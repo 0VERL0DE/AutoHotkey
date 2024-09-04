@@ -11,7 +11,6 @@ env:
     WindowSpy.ahk|nperovic/Dark_WindowSpy|WindowSpy.ahk
     SelectFile.ahk|nperovic/SelectFile|SelectFile.ahk
     UIATreeInspector.ahk|Descolada/UIA-v2|UIATreeInspector.ahk
-
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
   ADDRESS_SUFFIX: users.noreply.github.com
@@ -28,7 +27,6 @@ jobs:
     permissions:
       contents: write # Ensure the GITHUB_TOKEN has write access to the repository
 
-    
     steps:
       - name: Check whether to automatically monitor
         if: ${{ github.event_name != 'workflow_dispatch' && env.AUTOMATIC_MONITOR == 'false' }}
@@ -49,7 +47,6 @@ jobs:
         if: env.exiting1 != 'true'
         run: |
           COMMIT_MSG=""
-
           while IFS= read -r FILE_ENTRY || [ -n "$FILE_ENTRY" ]; do
             FILE_ENTRY=$(echo "$FILE_ENTRY" | xargs) # Trim leading/trailing whitespace
             [ -z "$FILE_ENTRY" ] && continue # Skip empty lines
@@ -57,21 +54,24 @@ jobs:
             REPO_WITH_REMOTE_FILE="${FILE_ENTRY#*|}"
             REPO="${REPO_WITH_REMOTE_FILE%%|*}"
             REMOTE_FILE_PATH="${REPO_WITH_REMOTE_FILE##*|}"
-
             echo "Processing repository: $REPO"
             echo "Local file path: $LOCAL_FILE_PATH"
             echo "Remote file path: $REMOTE_FILE_PATH"
             
             TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
             LOCAL_FILE_ABSPATH="$THISREPO_ROOT_ABSPATH/$LOCAL_FILE_PATH"
-            
+
+            # Check if the temp repo path already exists and remove it if necessary
+            if [ -d "$TEMP_REPO_PATH" ]; then
+              echo "Directory $TEMP_REPO_PATH already exists. Removing it."
+              rm -rf "$TEMP_REPO_PATH"
+            fi
+
             # Checkout the repository
             git clone --depth 1 https://github.com/$REPO.git $TEMP_REPO_PATH
             
             # Remove the .git directory to prevent embedding
             rm -rf "$TEMP_REPO_PATH/.git"
-
-            # remove unnecessary .md files
             rm -f *.md
 
             # Determine the absolute path of the remote file
@@ -84,7 +84,6 @@ jobs:
             
             # Ensure the directory for the local file exists
             mkdir -p "$(dirname "$LOCAL_FILE_ABSPATH")"
-
             # Check if the local file is identical to the remote file
             if [ -f "$LOCAL_FILE_ABSPATH" ] && cmp -s "$TEMP_REMOTE_FILE_ABSPATH" "$LOCAL_FILE_ABSPATH"; then
               echo "The file $LOCAL_FILE_PATH is identical to $REMOTE_FILE_PATH in $REPO. Skipping."
@@ -94,14 +93,10 @@ jobs:
               # Prepare commit message
               COMMIT_MSG+="Pulled $REMOTE_FILE_PATH from $REPO into $LOCAL_FILE_PATH.\n"
             fi
-
             
             # Clean up
             rm -rf "$TEMP_REPO_PATH"
-            # remove temp dir to avoid clone into existing dir error
-            rmdir /s /q "$TEMP_REPO_PATH"
           done <<< "${{ env.ORIGINFILES }}"
-
           # Check if any files were actually added to commit
           if [ -n "$COMMIT_MSG" ]; then
             echo "Commit message: $COMMIT_MSG"
@@ -109,7 +104,6 @@ jobs:
           else
             echo "No changes to commit."
             echo "exiting1=true" >> $GITHUB_ENV
-          fi
 
       - name: Commit and Push Changes
         if: env.exiting1 != 'true'
