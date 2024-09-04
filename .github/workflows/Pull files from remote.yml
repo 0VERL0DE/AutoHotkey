@@ -70,6 +70,8 @@ jobs:
             
             # Remove the .git directory to prevent embedding
             rm -rf "$TEMP_REPO_PATH/.git"
+
+            # remove unnecessary .md files
             rm -f *.md
 
             # Determine the absolute path of the remote file
@@ -96,6 +98,8 @@ jobs:
             
             # Clean up
             rm -rf "$TEMP_REPO_PATH"
+            # remove temp dir to avoid clone into existing dir error
+            rmdir /s /q "$TEMP_REPO_PATH"
           done <<< "${{ env.ORIGINFILES }}"
 
           # Check if any files were actually added to commit
