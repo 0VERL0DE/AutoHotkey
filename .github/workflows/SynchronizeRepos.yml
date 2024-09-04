@@ -65,7 +65,14 @@ jobs:
             
             TEMP_REPO_PATH="$TEMP_PATH/$(basename $REPO)"
             TARGET_DIR_PATH="$THISREPO_ROOT_ABSPATH/$TARGET_DIR"
-            
+
+            # Check if the temp repo path already exists and remove it if necessary
+            if [ -d "$TEMP_REPO_PATH" ]; then
+              echo "Directory $TEMP_REPO_PATH already exists. Removing it."
+              rm -rf "$TEMP_REPO_PATH"
+            fi
+
+
             # Checkout the repository
             git clone --depth 1 https://github.com/$REPO.git $TEMP_REPO_PATH
             
