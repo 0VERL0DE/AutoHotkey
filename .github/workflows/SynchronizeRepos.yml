@@ -120,9 +120,15 @@ jobs:
           git config user.name "$USERNAME"
           git config user.email "$USERNAME@$ADDRESS_SUFFIX"
           git add .
-          git commit -m "${COMMIT_MSG}"
-          if [ -n "$TARGET_BRANCH" ]; then
-            git push origin "$TARGET_BRANCH"
-          else
-            git push
+          git status
+
+          if ! git diff-index --quiet HEAD --; then 
+            git commit -m "${COMMIT_MSG}"
+            if [ -n "$TARGET_BRANCH" ]; then
+              git push origin "$TARGET_BRANCH"
+            else
+              git push
+            fi
           fi
+
+          
