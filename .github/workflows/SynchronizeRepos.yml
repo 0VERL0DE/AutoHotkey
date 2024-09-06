@@ -120,6 +120,7 @@ jobs:
           git config user.name "$USERNAME"
           git config user.email "$USERNAME@$ADDRESS_SUFFIX"
           git add .
+          git status
           git commit -m "${COMMIT_MSG}"
           if [ -n "$TARGET_BRANCH" ]; then
             git push origin "$TARGET_BRANCH"
