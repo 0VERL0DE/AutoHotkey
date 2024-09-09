@@ -15,6 +15,13 @@ env:
     lib|Descolada/UIA-v2|lib
     lib|hyaray/ahk_v2_lib|lib
     lib|samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely|64bit/lib
+    utils|GroggyOtter/PeepAHK|script
+    lib|GroggyOtter/jsongo_AHKv2|src
+    utils|GroggyOtter/Viewport-for-AHKv2|source
+    utils|GroggyOtter/AHK_Multi_Clipboard|src
+    utils|GroggyOtter/ahkv2_definition_rewrite
+    
+    
 
   AUTOMATIC_MONITOR: true
   USERNAME: ${{ github.actor }}
