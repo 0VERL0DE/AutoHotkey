@@ -19,7 +19,7 @@ env:
     lib|GroggyOtter/jsongo_AHKv2|src
     utils|GroggyOtter/Viewport-for-AHKv2|source
     utils|GroggyOtter/AHK_Multi_Clipboard|src
-    utils|GroggyOtter/ahkv2_definition_rewrite
+    utils|GroggyOtter/ahkv2_definition_rewrite|*
     
     
 
