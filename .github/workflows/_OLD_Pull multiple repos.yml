@@ -1,4 +1,4 @@
-name: Pull multiple repos
+name: _OLD_Pull multiple repos
 
 on:
   workflow_dispatch: # Manual trigger
