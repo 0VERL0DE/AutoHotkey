@@ -98,7 +98,12 @@ jobs:
             
             
             # Ensure the target directory exists
-            mkdir -p "$TARGET_DIR_PATH"
+            if [ ! -d "$TARGET_DIR_PATH" ]; then
+              echo "Target directory $TARGET_DIR_PATH does not exist. Creating it."
+              mkdir -p "$TARGET_DIR_PATH"
+            else
+              echo "Target directory $TARGET_DIR_PATH already exists."
+            fi
             
             # Sync the specified directory contents into the specified target directory
             rsync -av --update --exclude='.git' --exclude='.sh' --exclude='.*' "$TEMP_SRC_ABSPATH/" "$TARGET_DIR_PATH/"
