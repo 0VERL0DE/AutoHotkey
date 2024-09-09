@@ -85,12 +85,17 @@ jobs:
             rm -rf "$TEMP_REPO_PATH/.git"
             
             # Determine the absolute path of the source directory
-            TEMP_SRC_ABSPATH="$TEMP_REPO_PATH/$SRC_DIR"
-            
+            if [ "$SRC_DIR" = "*" ] || [ -z "$SRC_DIR" ]; then
+              TEMP_SRC_ABSPATH="$TEMP_REPO_PATH" # Sync the entire repository
+            else
+              TEMP_SRC_ABSPATH="$TEMP_REPO_PATH/$SRC_DIR" # Sync the specified subdirectory
+            fi
+                        
             if [ ! -d "$TEMP_SRC_ABSPATH" ]; then
               echo "No '$SRC_DIR' directory found in $REPO"
               continue
             fi
+            
             
             # Ensure the target directory exists
             mkdir -p "$TARGET_DIR_PATH"
