@@ -2,8 +2,8 @@ name: _OLD_Pull multiple repos
 
 on:
   workflow_dispatch: # Manual trigger
-  schedule:          # Scheduled trigger
-    - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
+#  schedule:          # Scheduled trigger
+#    - cron: '0 0 * * *' # Runs daily at midnight UTC; adjust the schedule as needed
 
 env:
   ORIGINREPOS: "Descolada/AHK-v2-libraries,Descolada/Acc-v2,Descolada/UIA-v2,Descolada/OCR,Descolada/UIAutomation,hyaray/ahk_v2_lib"  # List of repositories to pull from
