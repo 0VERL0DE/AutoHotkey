@@ -1,0 +1,4 @@
+20240916153246	1	
+20240916153258	12	C:\Users\loder\OneDrive - YAMAGATA EUROPE\Documents\AutoHotkey
+20240916153319	21	switchmonitor-v2.ahk - Visual Studio Code
+20240916153323	4	The-Automator Discovery Tool.ahk - Visual Studio Code

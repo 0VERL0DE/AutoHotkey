@@ -1,4 +1,6 @@
-﻿#Requires Autohotkey v2.0+
+﻿; Part of UIA
+
+#Requires Autohotkey v2.0+
 #Include ..\UIA-v2\Lib\UIA.ahk
 toc := "
 (

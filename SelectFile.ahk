@@ -5,6 +5,9 @@
  * @param {number} timeout The fuction will return 0 if timeout.
  * @returns {string} The path of the file that the user selected, or an empty string if the user did not select any file.
  */
+
+
+
 SelectFile(Folder, Ext := "", timeout?)
 {
     result := ""
