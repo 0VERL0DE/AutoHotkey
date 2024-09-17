@@ -21,6 +21,7 @@ env:
     utils|GroggyOtter/AHK_Multi_Clipboard|src
     utils|GroggyOtter/ahkv2_definition_rewrite|*
     utils/mwClipboard|mikeyww/mwClipboard|*
+    utils/V2Converter|mmikeww/AHK-v2-script-converter|
     
 
   AUTOMATIC_MONITOR: true
