@@ -4129,7 +4129,7 @@ UpdateGotoFunc(ScriptString)    ; the old UpdateGoto
    retScript  := ""
    loop parse ScriptString, "`n", "`r" {
       line  := A_LoopField
-      if (!InStr(line, "Goto", "On")) { ; Case sensitive because converter always converts to "Goto"
+      if (!InStr(line, "Goto", "On") or RegExMatch(Line, "^\s*;")) { ; Case sensitive because converter always converts to "Goto"
          retScript .= line . "`r`n"
          continue
       }
@@ -4160,7 +4160,7 @@ UpdateGoto(ScriptString) {
    loop parse ScriptString, "`n", "`r" {
       line      := A_LoopField
          ; if no goto command on this line, record line as is
-      if (!InStr(line, "Goto", "On")) { ; Case sensitive because converter always converts to "Goto"
+      if (!InStr(line, "Goto", "On") or RegExMatch(Line, "^\s*;")) { ; Case sensitive because converter always converts to "Goto"
          retScript .= line . "`r`n"
          continue
       }
@@ -4213,7 +4213,8 @@ FixVarSetCapacity(ScriptString) {
 
    loop parse ScriptString, "`n", "`r" {
       Line := A_LoopField
-      if (RegExMatch(Line, "(?<!VarSetStrCapacity\()(?<=\W)&(\w+)", &match)) {
+      if (RegExMatch(Line, "(?<!VarSetStrCapacity\()(?<=\W)&(\w+)", &match))
+         and !RegExMatch(Line, "^\s*;") {
          for vName, vType in gmVarSetCapacityMap {
             ;MsgBox "v: " vName "`nm1: " match[1]
             if (vName = match[1]) {
