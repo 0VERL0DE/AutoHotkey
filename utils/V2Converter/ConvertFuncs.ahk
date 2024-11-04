@@ -1887,6 +1887,8 @@ _Gui(p) {
       }  else if (var1 = "Font") {
          var1 := "SetFont"
          gGuiActiveFont := ToStringExpr(Var2) ", " ToStringExpr(Var3)
+      } else if (Var1 = "Cancel") {
+         Var1 := "Hide"
       } else if (var1 = "New") {
          return Trim(LineResult LineSuffix,"`n")
       }
@@ -2218,6 +2220,7 @@ _GuiControlGet(p) {
 }
 ;################################################################################
 _Hotkey(p) {
+   LineSuffix := ""
 
    ;Convert label to function
 
@@ -2247,11 +2250,15 @@ _Hotkey(p) {
       if (P[2] = "on" || P[2] = "off" || P[2] = "Toggle" || P[2] ~= "^AltTab" || P[2] ~= "^ShiftAltTab") {
          p[2] := p[2] = "" ? "" : ToExp(p[2])
       }
+      if InStr(p[3], "UseErrorLevel") {
+         p[3] := Trim(StrReplace(p[3], "UseErrorLevel"))
+         LineSuffix := " `; V1toV2: Removed UseErrorLevel"
+      }
       p[3] := p[3] = "" ? "" : ToExp(p[3])
       Out := Format("Hotkey({1}, {2}, {3})", p*)
    }
    Out := RegExReplace(Out, "\s*`"`"\s*\)$", ")")
-   Return RegExReplace(Out, "[\s\,]*\)$", ")")
+   Return RegExReplace(Out, "[\s\,]*\)$", ")") LineSuffix
 }
 ;################################################################################
 _IfGreater(p) {
@@ -2751,7 +2758,7 @@ _Process(p) {
 _SendMessage(p) {
    if (p[3] ~= "^&.*") {
      p[3] := SubStr(p[3],2)
-     Out := format('if (type(' . p[3] . ')="Buffer") { `;V1toV2 If statement may be removed depending on type parameter`n`r'
+     Out := format('if (type(' . p[3] . ')="Buffer") { `; V1toV2: If statement may be removed depending on type parameter`n`r'
          . gIndentation . ' ErrorLevel := SendMessage({1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9})', p*)
      Out := RegExReplace(Out, "[\s\,]*\)$", ")")
      Out .= format('`n`r' . gIndentation . '} else{`n`r'
