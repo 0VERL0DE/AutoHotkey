@@ -445,31 +445,46 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          ; msgbox("assignment regex`norigLine: " Line "`norig_left=" Equation[1] "`norig_right=" Equation[2] "`nconv_right=" ToStringExpr(Equation[2]))
          Line := RTrim(Equation[1]) . " := " . ToStringExpr(Equation[2])   ; regex above keeps the gIndentation already
       }
+      else if (RegExMatch(Line, "i)static([^:]*)="))
+      {
+         maskStrings(&Line)
+         While RegExMatch(Line, "i)static([^:]*)=") {
+            Line := RegExReplace(Line, "i)(static[^:]*)=", "$1:=")
+         }
+         If InStr(Line, ",")
+            EOLComment .= " `; V1toV2: Assuming this is v1.0 code"
+         restoreStrings(&Line)
+      }
       Else if (RegExMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*):=(\h*)$", &Equation))     ; var := should become var := ""
       {
          Line := RTrim(Equation[1]) . ' := ""' . Equation[2]
       }
-      else if (RegexMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*[:*\.]=\h*)(.*)", &Equation) && InStr(Line, '""')) ; Line is var assignment, and has ""
+      else if (RegexMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*[:*\.]=\h*)(.*)") && InStr(Line, '""')) ; Line is var assignment, and has ""
       {
-         ; 2024-08-02 AMB, Fix 272
-         maskStrings(&line), Line := Equation[1], val := Equation[2]
-         if (!RegexMatch(Line, "\h*\w+(\((?>[^)(]+|(?-1))*\))")) ; not a func
-         {
-            ConvertDblQuotes2(&Line, val)
-         }
-         else if (InStr(RegExReplace(Line, "\w*(\((?>[^)(]+|(?-1))*\))"), '""'))
-         {
-            funcArray := []
-            while (pos := RegexMatch(val, "\w+(\((?>[^)(]+|(?-1))*\))", &match))
+         ; Fixes issues with continuation sections
+         Line := RegExReplace(Line, '""(\h*)\r\n', '"' Chr(0x2700) '"$1`r`n')
+         if (RegexMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*[:*\.]=\h*)(.*)", &Equation) && InStr(Line, '""')) {
+            ; 2024-08-02 AMB, Fix 272
+            maskStrings(&line), Line := Equation[1], val := Equation[2]
+            if (!RegexMatch(Line, "\h*\w+(\((?>[^)(]+|(?-1))*\))")) ; not a func
             {
-               funcArray.push(match[])
-               val := StrReplace(val, match[], Chr(1000) "FUNC_" funcArray.Length Chr(1000),,, 1)
+               ConvertDblQuotes2(&Line, val)
             }
-            ConvertDblQuotes2(&Line, val)
-            for i, v in funcArray {
-               Line := StrReplace(Line, Chr(1000) "FUNC_" i Chr(1000), v)
+            else if (InStr(RegExReplace(Line, "\w*(\((?>[^)(]+|(?-1))*\))"), '""'))
+            {
+               funcArray := []
+               while (pos := RegexMatch(val, "\w+(\((?>[^)(]+|(?-1))*\))", &match))
+               {
+                  funcArray.push(match[])
+                  val := StrReplace(val, match[], Chr(1000) "FUNC_" funcArray.Length Chr(1000),,, 1)
+               }
+               ConvertDblQuotes2(&Line, val)
+               for i, v in funcArray {
+                  Line := StrReplace(Line, Chr(1000) "FUNC_" i Chr(1000), v)
+               }
             }
          }
+         Line := RegExReplace(Line, Chr(0x2700))
          restoreStrings(&line)
       }
 
