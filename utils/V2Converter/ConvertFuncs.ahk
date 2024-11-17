@@ -461,31 +461,46 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
       }
       else if (RegexMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*[:*\.]=\h*)(.*)") && InStr(Line, '""')) ; Line is var assignment, and has ""
       {
+         ternary := 0
          ; Fixes issues with continuation sections
          Line := RegExReplace(Line, '""(\h*)\r\n', '"' Chr(0x2700) '"$1`r`n')
+         maskFuncCalls(&Line)
          if (RegexMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*[:*\.]=\h*)(.*)", &Equation) && InStr(Line, '""')) {
             ; 2024-08-02 AMB, Fix 272
-            maskStrings(&line), Line := Equation[1], val := Equation[2]
-            if (!RegexMatch(Line, "\h*\w+(\((?>[^)(]+|(?-1))*\))")) ; not a func
-            {
-               ConvertDblQuotes2(&Line, val)
-            }
-            else if (InStr(RegExReplace(Line, "\w*(\((?>[^)(]+|(?-1))*\))"), '""'))
-            {
-               funcArray := []
-               while (pos := RegexMatch(val, "\w+(\((?>[^)(]+|(?-1))*\))", &match))
-               {
-                  funcArray.push(match[])
-                  val := StrReplace(val, match[], Chr(1000) "FUNC_" funcArray.Length Chr(1000),,, 1)
+            If (InStr(Line, "?") && InStr(Line, ":")) { ; Ternary
+               Line := Equation[1], val := Equation[2]
+               maskStrings(&val)
+               If (!InStr(val, "?") || !InStr(val, ":")) {
+                  ternary := 0
+                  Line := Line restoreStrings(&val)
+               } else {
+                  ternary := 1
+                  post := StrSplit(val, ":")
+                  pre := StrSplit(post[1], "?")
+
+                  expr := pre[1]
+                  ifTrue := pre[2]
+                  ifFalse := post[2]
+
+                  restoreStrings(&expr)
+                  ConvertDblQuotes2(&Line, expr "?")
+                  restoreStrings(&ifTrue)
+                  ConvertDblQuotes2(&Line, ifTrue ":")
+                  restoreStrings(&ifFalse)
+                  ConvertDblQuotes2(&Line, ifFalse)
                }
-               ConvertDblQuotes2(&Line, val)
-               for i, v in funcArray {
-                  Line := StrReplace(Line, Chr(1000) "FUNC_" i Chr(1000), v)
+            }
+            If !ternary {
+               maskStrings(&line), Line := Equation[1], val := Equation[2]
+               if (!RegexMatch(Line, "\h*\w+(\((?>[^)(]+|(?-1))*\))")) ; not a func
+               {
+                  ConvertDblQuotes2(&Line, val)
                }
             }
          }
          Line := RegExReplace(Line, Chr(0x2700))
          restoreStrings(&line)
+         restoreFuncCalls(&Line)
       }
 
       ; -------------------------------------------------------------------------------
@@ -735,7 +750,7 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          if (RegExMatch(Params, "^%\w+%$"))   ; if the var is wrapped in %%, then remove them
          {
             Params := SubStr(Params, 2, -1)
-            Line := gIndentation . "return " . Params . EOLComment   ; 'return' is the only command that we won't use a comma before the 1st param
+            Line := gIndentation . "return " . Params . EOLComment
          }
       }
 
@@ -744,6 +759,14 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
       else if (RegExMatch(Line, "i)(^\s*[\}]?\s*(else|while|if)[\s\(][^\{]*{\s*)(.*$)", &Equation)) {
          PreLine .= Equation[1]
          Line := Equation[3]
+      }
+      If RegExMatch(Line, "i)^(\s*Return\s*)(.*)", &Equation) && InStr(Equation[2], ",") {
+         maskFuncCalls(&Line) ; Make code look nicer
+         maskStrings(&Line) ; By checking if comma is part of string or func
+         if InStr(Line, ",")
+            Line := Equation[1] "(AHKv1v2_Temp := " Equation[2] ", AHKv1v2_Temp) `; V1toV2: Wrapped Multi-statement return with parentheses"
+         restoreStrings(&Line)
+         restoreFuncCalls(&Line)
       }
       If IsSet(linesInIf) && linesInIf != "" {
          linesInIf++
@@ -1006,6 +1029,38 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
                   Line := SkipLine
             }
          }
+
+      if InStr(Line, '""') && RegExReplace(Line, "\w\(",, &funcCount) != Line
+      {
+         maskFuncCalls(&Line)
+         maskStrings(&Line)
+         restoreFuncCalls(&Line)
+         Loop(funcCount) {
+            Line := RegExReplace(Line, '(?<!``)``"', Chr(0x2727)) ; (?<!`)`"
+            ;MsgBox "Loop`n" Line 
+            splitFunc := V1ParSplitFunctions(Line, A_Index)
+            ;MsgBox "1: " splitFunc.pre "`n2: " splitFunc.func "`n3: " splitFunc.parameters "`n4: " splitFunc.post
+            splitParams := splitFunc.parameters
+            maskFuncCalls(&splitParams)
+            maskStrings(&splitParams)
+            ;MsgBox "Pre Split`n" splitParams
+            splitParams := StrSplit(splitParams, ",")
+            Line := ""
+            for , param in splitParams {
+               restoreStrings(&param)
+               ConvertDblQuotes2(&Line, param)
+               Line .= ","
+            }
+            ;MsgBox "Converted Params`n" Line
+            Line := SubStr(Line, 1, StrLen(Line) - 1)
+            restoreFuncCalls(&Line)
+            ;MsgBox "Restored`n" Line
+            Line := splitFunc.pre splitFunc.func "(" Line ")" splitFunc.post
+         }
+         Line := StrReplace(Line, Chr(0x2727), '``"')
+         ;MsgBox "Constructed`n" Line
+         restoreStrings(&Line)
+      }
 
       if (RegexMatch(Line, "i)A_Caret(X|Y)", &Equation)) {
          if (RegexMatch(Line, "i)A_CaretX") && RegexMatch(Line, "i)A_CaretY")) {
@@ -3565,7 +3620,7 @@ V1ParSplit(String) {
 ; Output:
 ;   oResult - array
 ;       oResult.pre           text before the function
-;       oResult.function      function name
+;       oResult.func          function name
 ;       oResult.parameters    parameters of the function
 ;       oResult.post          text afther the function
 ;       oResult.separator     character before the function
@@ -4276,8 +4331,13 @@ FixByRefParams(ScriptString) {
       Line := A_LoopField
       replacement := false
       for func, v in gmByRefParamMap {
+         if (RegExMatch(Line, "(\h+`;.*)$", &EOLComment)) {
+            EOLComment := EOLComment[1]
+            Line       := RegExReplace(Line, "(\h+`;.*)$")
+         }
          if RegExMatch(Line, "(^|.*\W)\Q" func "\E\((.*)\)(.*?)$", &match) ; Nested functions break and cont. sections this
-            && !InStr(Line, "&") { ; Not defining a function
+            && !InStr(Line, "&") ; Not defining a function
+            && !RegExMatch(Line, "^\s*;") { ; Comment
             retLine := match[1] func "("
             params := match[2]
             while pos := RegExMatch(params, "[^,]+", &MatchFuncParams) {
@@ -4293,9 +4353,9 @@ FixByRefParams(ScriptString) {
          }
       }
       if !replacement
-         retScript .= Line "`r`n"
+         retScript .= Line EOLComment "`r`n"
       else
-         retScript .= retLine "`r`n"
+         retScript .= retLine EOLComment "`r`n"
    }
    return RTrim(retScript, "`r`n") . happyTrails
 }
