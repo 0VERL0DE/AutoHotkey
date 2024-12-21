@@ -1264,11 +1264,13 @@ FinalizeConvert(&code)
 ;    Set gfNoSideEffect to 1 to make some callable _Funcs to not change global vars
 subLoopFunctions(ScriptString, Line, &retV2, &gotFunc) {
    global gFuncParams, gfrePostFuncMatch
+   FuncsRemoved := 0 ; Number of functions that have been removed during conversion (e.g Arr.Length() -> Arr.Length)
    loop {
       if !InStr(Line, "(")
          break
 
-      oResult := V1ParSplitfunctions(Line, A_Index)
+      ;MsgBox FuncsRemoved
+      oResult := V1ParSplitfunctions(Line, A_Index - FuncsRemoved)
 
       if (oResult.Found = 0) {
          break
@@ -1312,6 +1314,7 @@ subLoopFunctions(ScriptString, Line, &retV2, &gotFunc) {
             }
          }
       }
+      StrReplace(Line, "()",,, &v1FuncCount)
       for v1, v2 in ConvertList
       {
          gfrePostFuncMatch := False
@@ -1372,6 +1375,11 @@ subLoopFunctions(ScriptString, Line, &retV2, &gotFunc) {
 
             retV2 := Line
             gotFunc:=True
+
+            ; TODO: make this count "(" instead, fixes removed funcs with params
+            ;       only breaks if script did Arr.Length(MeaninglessVar)
+            StrReplace(Line, "()",,, &v2FuncCount)
+            FuncsRemoved := Max(0, v1FuncCount - v2FuncCount)
 
             break ; Function/Method just found and processed.
          }
@@ -1854,10 +1862,14 @@ _Gui(p) {
    global gGuiList
    global gOrig_ScriptStr       ; array of all the lines
    global gOScriptStr           ; array of all the lines
+   global gAllV1LabelNames      ; all label names (comma delim str)
+   global gAllFuncNames         ; all func names (comma delim str)
    global gO_Index              ; current index of the lines
    global gmGuiVList
    global gGuiActiveFont
    global gmGuiCtrlObj
+
+   static HowGuiCreated := Map()
    ;preliminary version
 
    SubCommand := RegExMatch(p[1], "i)^\s*[^:]*?\s*:\s*(.*)$", &newGuiName) = 0 ? Trim(p[1]) : newGuiName[1]
@@ -1884,6 +1896,7 @@ _Gui(p) {
                }
             }
          }
+         HowGuiCreated[GuiNameLine] := "New"
       } else if (RegExMatch(GuiLine, "i)^\s*Gui\s*[\s,]\s*[^,\s]*:.*$")) {
          GuiNameLine := RegExReplace(GuiLine, "i)^\s*Gui\s*[\s,]\s*([^,\s]*):.*$", "$1", &RegExCount1)
          GuiLine := RegExReplace(GuiLine, "i)^(\s*Gui\s*[\s,]\s*)([^,\s]*):(.*)$", "$1$3", &RegExCount1)
@@ -1891,8 +1904,10 @@ _Gui(p) {
             GuiNameLine := "myGui"
          }
          gGuiNameDefault := GuiNameLine
+         HowGuiCreated[GuiNameLine] := "Set"
       } else {
          GuiNameLine := gGuiNameDefault
+         HowGuiCreated[GuiNameLine] := "Default"
       }
       if (RegExMatch(GuiNameLine, "^\d+$")) {
          GuiNameLine := "oGui" GuiNameLine
@@ -1900,7 +1915,10 @@ _Gui(p) {
       GuiOldName := GuiNameLine = "myGui" ? "" : GuiNameLine
       if (RegExMatch(GuiOldName, "^oGui\d+$")) {
          GuiOldName := StrReplace(GuiOldName, "oGui")
+         if (HowGuiCreated[GuiOldName] ~= "New|Default")
+            GuiOldName := ""
       }
+
       Var1 := RegExReplace(p[1], "i)^([^:]*):\s*(.*)$", "$2")
       Var2 := p[2]
       Var3 := p[3]
@@ -1914,6 +1932,9 @@ _Gui(p) {
          Var3 := RegExReplace(Var3, "i)^(.*?)\bg([^,\h``]+)(.*)$", "$1$3")    ; remove glabel
       } else if (Var2 = "Button") {
          ControlLabel := GuiOldName var2 RegExReplace(Var4, "[\s&]", "")
+         ; dbgMsgBox(,, ControlLabel, InStr(gAllV1LabelNames, ControlLabel), InStr(gAllFuncNames, ControlLabel))
+         if (!InStr(gAllV1LabelNames, ControlLabel) and !InStr(gAllFuncNames, ControlLabel))
+            ControlLabel := ""
       }
       if (RegExMatch(Var3, "i)\bv[\w]*\b")) {
          ControlName := RegExReplace(Var3, "i)^.*\bv([\w]*)\b.*$", "$1")
@@ -3909,7 +3930,9 @@ ConvertPseudoArray(ScriptStringInput, PseudoArrayName) {
       if (PseudoArrayName.HasOwnProp("regex") && PseudoArrayName.regex)
       {
          ; this is regexmatch array[0] - validate that array has been set -> (m&&m[0])
+         maskStrings(&ScriptStringInput)
          ScriptStringInput := RegExReplace(ScriptStringInput, "is)(?<!\w|&|\.)" ArrayName "(?!&|\w|%|\.|\[|\s*:=)", "(" ArrayName "&&" NewName ")")
+         restoreStrings(&ScriptStringInput)
       }
       else
       {
