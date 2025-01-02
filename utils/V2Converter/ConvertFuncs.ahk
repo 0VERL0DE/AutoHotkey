@@ -449,11 +449,11 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          ; msgbox("assignment regex`norigLine: " Line "`norig_left=" Equation[1] "`norig_right=" Equation[2] "`nconv_right=" ToStringExpr(Equation[2]))
          Line := RTrim(Equation[1]) . " := " . ToStringExpr(Equation[2])   ; regex above keeps the gIndentation already
       }
-      else if (RegExMatch(Line, "i)static([^:]*)="))
+      else if (RegExMatch(Line, "i)((global|local|static).*)(?<!:)="))
       {
          maskStrings(&Line)
-         While RegExMatch(Line, "i)static([^:]*)=") {
-            Line := RegExReplace(Line, "i)(static[^:]*)=", "$1:=")
+         While RegExMatch(Line, "i)((global|local|static).*)(?<!:)=") {
+            Line := RegExReplace(Line, "i)((global|local|static).*)(?<!:)=", "$1:=")
          }
          If InStr(Line, ",")
             EOLComment .= " `; V1toV2: Assuming this is v1.0 code"
@@ -812,12 +812,12 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
       }
 
       ; Fixing ternary operations [var ?  : "1"] => [var ? "" : "1"]
-      if (RegExMatch(Line, "i)^(.*)(\s\?\s*\:\s*)(.*)$", &Equation)) {
-         Line := RegExReplace(Line, "i)^(.*\s*)\?\s*\:(\s*)(.*)$", '$1? "" :$3')
+      if (RegExMatch(Line, "im)^(.*)(\s\?\s*\:\s*)(.*)$", &Equation)) {
+         Line := RegExReplace(Line, "im)^(.*\s*)\?\s*\:(\s*)(.*)$", '$1? "" :$3')
       }
       ; Fixing ternary operations [var ? "1" : ] => [var ? "1" : ""]
-      if (RegExMatch(Line, "i)^(.*\s\?.*\:\s*)(\)|$)", &Equation)) {
-         Line := RegExReplace(Line, "i)^(.*\s\?.*\:\s*)(\)|$)", '$1 ""$2')
+      if (RegExMatch(Line, "im)(^|\n)(.*\s\?.*\:\s*)(\)|$)", &Equation)) {
+         Line := RegExReplace(Line, "im)^(.*\s\?.*\:\s*)(\)|$)", '$1 ""$2')
       }
 
       ; Fix quote object properties [{"A": "B"}] => [{A: "B"}]
@@ -855,6 +855,12 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
                Line .= chunk
             }
          }
+         restoreStrings(&Line)
+      }
+
+      If RegExMatch(Line, "\w+\.\(") {
+         maskStrings(&Line)
+         Line := RegExReplace(Line, "(\w+)\.\(", "$1.Call(")
          restoreStrings(&Line)
       }
 
@@ -1913,11 +1919,10 @@ _Gui(p) {
          GuiNameLine := "oGui" GuiNameLine
       }
       GuiOldName := GuiNameLine = "myGui" ? "" : GuiNameLine
-      if (RegExMatch(GuiOldName, "^oGui\d+$")) {
+      if (RegExMatch(GuiOldName, "^oGui\d+$"))
          GuiOldName := StrReplace(GuiOldName, "oGui")
-         if (HowGuiCreated[GuiOldName] ~= "New|Default")
-            GuiOldName := ""
-      }
+      if (GuiOldName != "" and HowGuiCreated[GuiOldName] ~= "New|Default")
+         GuiOldName := ""
 
       Var1 := RegExReplace(p[1], "i)^([^:]*):\s*(.*)$", "$2")
       Var2 := p[2]
