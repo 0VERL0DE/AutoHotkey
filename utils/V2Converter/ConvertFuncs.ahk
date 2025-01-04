@@ -264,7 +264,7 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          deref := "``"
          if (HasProp(gaScriptStrsUsed, "EscapeChar")) {
             deref := gaScriptStrsUsed.EscapeChar
-            Line := StrReplace(Line, "``", "````")
+            Line := StrReplace(Line, "``", "``````")
             Line := StrReplace(Line, gaScriptStrsUsed.EscapeChar, "``")
          }
          if (HasProp(gaScriptStrsUsed, "DerefChar")) {
@@ -764,6 +764,13 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          PreLine .= Equation[1]
          Line := Equation[3]
       }
+
+      ; Remove [] from classes with no params
+      else if (RegExMatch(Line, "(.+)\[\](\s*{?)", &Equation)) {
+         If SubStr(Line, -1) = "{" or RegExMatch(gOScriptStr[gO_Index + 1], "\s*{")
+            Line := Equation[1] Equation[2]
+      }
+
       If RegExMatch(Line, "i)^(\s*Return\s*)(.*)", &Equation) && InStr(Equation[2], ",") {
          maskFuncCalls(&Line) ; Make code look nicer
          maskStrings(&Line) ; By checking if comma is part of string or func
@@ -1812,10 +1819,17 @@ _FileSelect(p) {
    Line := format("{1} := FileSelect({2})", OutputVar, parameters)
    if (InStr(Options, "M")) {
       Line := format("{1} := FileSelect({2})", "o" OutputVar, parameters) "`r`n"
-      Line .= gIndentation "for FileName in o " OutputVar "`r`n"
+      Line .= gIndentation "for FileName in o" OutputVar "`r`n"
       Line .= gIndentation "{`r`n"
-      Line .= gIndentation OutputVar " .= A_index=2 ? `"``r`n`" : `"`"`r`n"
-      Line .= gIndentation OutputVar " .= A_index=1 ? FileName : Regexreplace(FileName,`"^.*\\([^\\]*)$`" ,`"$1`") `"``r``n`"`n"
+      Line .= gIndentation OutputVar " .= A_index=2 ? `"``r``n`" : `"`"`r`n"
+      Line .= gIndentation OutputVar " .= A_index=1 ? FileName : RegExReplace(FileName,`"^.*\\([^\\]*)$`" ,`"$1`") `"``r``n`"`r`n"
+      Line .= gIndentation "}"
+   }
+   if (gaScriptStrsUsed.ErrorLevel) {
+      Line .= "`r`n" gIndentation "if (" OutputVar " = `"`") {`r`n"
+      Line .= gIndentation "ErrorLevel := 1`r`n"
+      Line .= gIndentation "} else {`r`n"
+      Line .= gIndentation "ErrorLevel := 0`r`n"
       Line .= gIndentation "}"
    }
    return Line
@@ -2171,7 +2185,7 @@ _Gui(p) {
          gaList_LblsToFuncO.Push({label: ControlLabel, parameters: 'A_GuiEvent := "", GuiCtrlObj := "", Info := "", *', NewFunctionName: getV2Name(ControlLabel)})
       }
       if (ControlHwnd != "") {
-         LineResult .= "`r`n" gIndentation ControlHwnd " := " ControlObject ".hwnd"
+         LineResult .= ", " ControlHwnd " := " ControlObject ".hwnd"
       }
    }
    DebugWindow("LineResult:" LineResult "`r`n")
@@ -2951,10 +2965,12 @@ _SendMessage(p) {
 _SetTimer(p) {
    if (p[2] = "Off") {
       Out := format("SetTimer({1},0)", p*)
+   } else if (p[2] = 0) {
+      Out := format("SetTimer({1},1)", p*) ; Change to 1, because 0 deletes timer instead of no delay
    } else {
       Out := format("SetTimer({1},{2},{3})", p*)
-      gaList_LblsToFuncO.Push({label: p[1], parameters: ""})
    }
+   gaList_LblsToFuncO.Push({label: p[1], parameters: ""})
 
    Return RegExReplace(Out, "[\s\,]*\)$", ")")
 }
