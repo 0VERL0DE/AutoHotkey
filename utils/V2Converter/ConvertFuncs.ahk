@@ -441,7 +441,7 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
       ; lexikos says var=value should always be a string, even numbers
       ; https://autohotkey.com/boards/viewtopic.php?p=118181#p118181
       ;
-      else if (RegExMatch(Line, "(?i)^(\h*[a-z_][a-z_0-9]*\h*)=([^;\v]*)", &Equation))
+      else if (RegExMatch(Line, "(?i)^(\h*[a-z_%][a-z_0-9%]*\h*)=([^;\v]*)", &Equation))
       {
          ; msgbox("assignment regex`norigLine: " Line "`norig_left=" Equation[1] "`norig_right=" Equation[2] "`nconv_right=" ToStringExpr(Equation[2]))
          Line := RTrim(Equation[1]) . " := " . ToStringExpr(Equation[2])   ; regex above keeps the gIndentation already
@@ -1099,6 +1099,8 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
       if InStr(Line, '""') && RegExReplace(Line, "\w\(",, &funcCount) != Line
       {
          maskFuncCalls(&Line)
+         Line := StrReplace(Line, "(", Chr(0x3030))
+         Line := StrReplace(Line, ")", Chr(0x3131))
          maskStrings(&Line)
          restoreFuncCalls(&Line)
          Loop(funcCount) {
@@ -1124,6 +1126,8 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
             Line := splitFunc.pre splitFunc.func "(" Line ")" splitFunc.post
          }
          Line := StrReplace(Line, Chr(0x2727), '``"')
+         Line := StrReplace(Line, Chr(0x3030), "(")
+         Line := StrReplace(Line, Chr(0x3131), ")")
          ;MsgBox "Constructed`n" Line
          restoreStrings(&Line)
       }
@@ -2513,7 +2517,7 @@ _IfNotInString(p) {
 }
 ;################################################################################
 _Input(p) {
-   Out := format("ih{1} := InputHook({2},{3},{4}), ih{1}.Start(), ih{1}.Wait(), {1} := ih{1}.Input", p*)
+   Out := format("ih{1} := InputHook({2},{3},{4}), ih{1}.Start(), " (gaScriptStrsUsed.ErrorLevel ? "ErrorLevel := " : "") "ih{1}.Wait(), {1} := ih{1}.Input", p*)
    Return out := RegExReplace(Out, "[\s\,]*\)", ")")
 }
 ;################################################################################
