@@ -428,13 +428,6 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          continue
       }
       ; -------------------------------------------------------------------------------
-      ; 2024-09-07 f2g: FIXED - Adjacent, comma-separated empty string assignments - ex1
-      ; re: https://github.com/mmikeww/AHK-v2-script-converter/issues/286
-      else if (RegExMatch(Line, "i)^.*:=\h*`"`"\h*(?<!\))$"))
-      {
-         ; DO NOTHING - already V2 compliant
-      }
-      ; -------------------------------------------------------------------------------
       ; Replace = with := expression equivilents in "var = value" assignment lines
       ;
       ; var = 3      will be replaced with    var := "3"
@@ -838,7 +831,7 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
          Line := RegExReplace(Line, "im)^(.*\s\?.*\:\s*)(\)|$)", '$1 ""$2')
       }
 
-      ; Fix quote object properties [{"A": "B"}] => [{A: "B"}]
+      ; Fix quoted object properties [{"A": "B"}] => [{A: "B"}]
       if InStr(Line, "{") and InStr(Line, '"') and InStr(Line, ":") {
          maskStrings(&Line)
          if InStr(Line, "{") and !InStr(Line, '"') and InStr(Line, ":") {
@@ -853,7 +846,7 @@ _convertLines(ScriptString, finalize:=!gUseMasking)   ; 2024-06-26 RENAMED to ac
                   codeArray.Push(tempCode)
                   tempCode := ""
                   inObj++
-               } else if (char = ":" and inObj) {
+               } else if (char ~= ":|," and inObj) {
                   codeArray.Push(tempCode)
                   tempCode := ""
                } else if (char = "}") {
@@ -1999,6 +1992,7 @@ _Gui(p) {
          Var3 := StrReplace(Var3, match[])
          if (ControlObject = "" && Var4 != "") {
             ControlObject := InStr(ControlHwnd, SubStr(Var4, 1, 4)) ? "ogc" StrReplace(ControlHwnd, "hwnd") : "ogc" Var4 StrReplace(ControlHwnd, "hwnd")
+            ControlObject := RegExReplace(ControlObject, "\W")
          } else if (ControlObject = "") {
             gGuiControlCount++
             ControlObject := Var2 gGuiControlCount
@@ -2378,6 +2372,10 @@ _GuiControl(p) {
       }
    } else if (RegExMatch(SubCommand, "^[+-].*")) {
       Return ControlObject ".Options(" ToExp(SubCommand) ")"
+   } else { ; Passed as variable, just output something that won't work
+      if RegExMatch(SubCommand, "[+-].*")
+         Return ControlObject ".Options(" ToExp(SubCommand) ")"
+      Return ControlObject ".%" ToExp(SubCommand) "%() `; V1toV2: SubCommand passed as variable, check variable contents and docs"
    }
 
    Return
@@ -4669,7 +4667,7 @@ addGuiCBArgs(&code) {
    global gmGuiFuncCBChecks
    for key, val in gmGuiFuncCBChecks {
       code := RegExReplace(code, "im)^(\s*" key ")\((.*?)\)(\s*\{)", '$1(A_GuiEvent := "", GuiCtrlObj := "", Info := "", *)$3 `; V1toV2: Handle params: $2')
-      code := RegExReplace(code, "m) `; V1toV2: Handle params: $")
+      code := RegExReplace(code, 'm) `; V1toV2: Handle params: (A_GuiEvent := "", GuiCtrlObj := "", Info := "", \*)?$')
    }
 }
 ;################################################################################
